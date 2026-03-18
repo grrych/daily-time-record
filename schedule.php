@@ -11,6 +11,22 @@ require_once SRC . '/schedule/edit-schedule.php';
 require_once TEMP . '/header.php';
 
 flashMessage();
+
+// ---------- Declare generateTimeOptions once ----------
+if (!function_exists('generateTimeOptions')) {
+    function generateTimeOptions($selected = null)
+    {
+        $start = strtotime('06:00');
+        $end   = strtotime('22:00');
+
+        for ($t = $start; $t <= $end; $t += 15 * 60) {
+            $timeValue = date('H:i', $t);
+            $timeText  = date('g:i A', $t);
+            $selectedAttr = ($selected === $timeValue) ? 'selected' : '';
+            echo "<option value='{$timeValue}' {$selectedAttr}>{$timeText}</option>";
+        }
+    }
+}
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
@@ -24,7 +40,7 @@ flashMessage();
         <h1 class="text-2xl font-bold text-gray-800 mb-6">My Schedule</h1>
 
         <?php
-        $daysOfWeek = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         ?>
 
         <!-- Cards -->
@@ -76,134 +92,111 @@ flashMessage();
 
                 <tbody class="divide-y">
 
-                <?php foreach ($daysOfWeek as $day): ?>
-                    <?php $schedule = getScheduleByDayOfWeek($day, $_SESSION['intern_id']); ?>
-
-                    <?php if (empty($schedule)): ?>
-                        <tr>
-                            <td class="py-2"><?= $day ?></td>
-                            <td class="text-gray-400 italic">Not set</td>
-                            <td class="text-gray-400 italic">—</td>
-                            <td class="text-gray-400 italic">Not set</td>
-                            <td class="text-gray-400 italic">—</td>
-                            <td>
-                                <button
-                                    class="px-4 py-1 text-sm bg-blue-600 text-white rounded"
-                                    data-modal-open="modal-<?= $day ?>">
-                                    Set
-                                </button>
-                            </td>
-                        </tr>
-                    <?php else: ?>
+                    <?php foreach ($daysOfWeek as $day): ?>
+                        <?php $schedule = getScheduleByDayOfWeek($day, $_SESSION['intern_id']); ?>
 
                         <?php
-                        $start = $schedule['start_time'];
-                        $end   = $schedule['end_time'];
-                        $breakStart = $schedule['break_start'] ?? null;
-                        $breakEnd   = $schedule['break_end'] ?? null;
+                        if (!empty($schedule)) {
+                            $start      = $schedule['start_time'];
+                            $end        = $schedule['end_time'];
+                            $breakStart = $schedule['break_start'] ?? null;
+                            $breakEnd   = $schedule['break_end'] ?? null;
 
-                        $totalSeconds = strtotime($end) - strtotime($start);
-
-                        if ($breakStart && $breakEnd) {
-                            $totalSeconds -= (strtotime($breakEnd) - strtotime($breakStart));
+                            $totalSeconds = strtotime($end) - strtotime($start);
+                            if ($breakStart && $breakEnd) {
+                                $totalSeconds -= (strtotime($breakEnd) - strtotime($breakStart));
+                            }
+                            $totalHours = round($totalSeconds / 3600, 2);
                         }
-
-                        $totalHours = round($totalSeconds / 3600, 2);
                         ?>
 
                         <tr>
                             <td class="py-2"><?= $day ?></td>
-
-                            <td><?= date('g:i A', strtotime($start)); ?></td>
-
+                            <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
                             <td>
-                                <?php if ($breakStart && $breakEnd): ?>
-                                    <?= date('g:i A', strtotime($breakStart)); ?> -
-                                    <?= date('g:i A', strtotime($breakEnd)); ?>
+                                <?php if (!empty($schedule) && $breakStart && $breakEnd): ?>
+                                    <?= date('g:i A', strtotime($breakStart)); ?> - <?= date('g:i A', strtotime($breakEnd)); ?>
                                 <?php else: ?>
-                                    —
+                                    <span class="text-gray-400 italic">—</span>
                                 <?php endif; ?>
                             </td>
-
-                            <td><?= date('g:i A', strtotime($end)); ?></td>
-
-                            <td><?= $totalHours ?> hrs</td>
-
+                            <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
+                            <td><?= !empty($schedule) ? "{$totalHours} hrs" : '<span class="text-gray-400 italic">—</span>'; ?></td>
                             <td>
                                 <button
-                                    class="px-3 py-1 text-sm border border-blue-600 text-blue-600 rounded"
+                                    class="<?= empty($schedule) ? 'px-4 py-1 bg-blue-600 text-white rounded' : 'px-3 py-1 border border-blue-600 text-blue-600 rounded' ?>"
                                     data-modal-open="modal-<?= $day ?>">
-                                    Edit
+                                    <?= empty($schedule) ? 'Set' : 'Edit' ?>
                                 </button>
                             </td>
                         </tr>
 
-                    <?php endif; ?>
+                        <!-- MODAL -->
+                        <div id="modal-<?= $day ?>" data-modal
+                            class="fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
 
-                    <!-- MODAL -->
-                    <div id="modal-<?= $day ?>" data-modal
-                        class="fixed inset-0 hidden items-center justify-center bg-black/50 z-50">
+                            <div data-modal-content
+                                class="bg-white w-full max-w-md rounded-lg p-6 transform scale-90 opacity-0 transition-all duration-300">
 
-                        <div class="bg-white w-full max-w-md rounded-lg p-6">
+                                <h2 class="text-lg font-semibold mb-4"><?= $day ?> Schedule</h2>
 
-                            <h2 class="text-lg font-semibold mb-4"><?= $day ?> Schedule</h2>
+                                <form action="<?= BASE_URL ?>/schedule.php" method="POST" class="space-y-4">
 
-                            <form action="<?= BASE_URL ?>/schedule.php" method="POST" class="space-y-4">
+                                    <input type="hidden" name="day" value="<?= $day ?>">
+                                    <input type="hidden" name="<?= empty($schedule) ? 'set' : 'edit' ?>">
+                                    <?php if (!empty($schedule)): ?>
+                                        <input type="hidden" name="scheduleId" value="<?= $schedule['schedule_id'] ?>">
+                                    <?php endif; ?>
 
-                                <input type="hidden" name="day" value="<?= $day ?>">
-                                <input type="hidden" name="<?= empty($schedule) ? 'set' : 'edit' ?>">
+                                    <!-- Start -->
+                                    <div>
+                                        <label class="text-sm">Start</label>
+                                        <select name="startTime" class="w-full border rounded px-3 py-2">
+                                            <option value="">-- Select Start --</option>
+                                            <?php generateTimeOptions($schedule['start_time'] ?? null); ?>
+                                        </select>
+                                    </div>
 
-                                <?php if (!empty($schedule)): ?>
-                                    <input type="hidden" name="scheduleId" value="<?= $schedule['schedule_id'] ?>">
-                                <?php endif; ?>
+                                    <!-- Break Start -->
+                                    <div>
+                                        <label class="text-sm">Break Start</label>
+                                        <select name="breakStart" class="w-full border rounded px-3 py-2">
+                                            <option value="">-- Select Break Start --</option>
+                                            <?php generateTimeOptions($schedule['break_start'] ?? null); ?>
+                                        </select>
+                                    </div>
 
-                                <!-- Start -->
-                                <div>
-                                    <label class="text-sm">Start</label>
-                                    <input type="time" name="startTime"
-                                        value="<?= $schedule['start_time'] ?? '' ?>"
-                                        class="w-full border rounded px-3 py-2">
-                                </div>
+                                    <!-- Break End -->
+                                    <div>
+                                        <label class="text-sm">Break End</label>
+                                        <select name="breakEnd" class="w-full border rounded px-3 py-2">
+                                            <option value="">-- Select Break End --</option>
+                                            <?php generateTimeOptions($schedule['break_end'] ?? null); ?>
+                                        </select>
+                                    </div>
 
-                                <!-- Break Start -->
-                                <div>
-                                    <label class="text-sm">Break Start</label>
-                                    <input type="time" name="breakStart"
-                                        value="<?= $schedule['break_start'] ?? '' ?>"
-                                        class="w-full border rounded px-3 py-2">
-                                </div>
+                                    <!-- End -->
+                                    <div>
+                                        <label class="text-sm">End</label>
+                                        <select name="endTime" class="w-full border rounded px-3 py-2">
+                                            <option value="">-- Select End --</option>
+                                            <?php generateTimeOptions($schedule['end_time'] ?? null); ?>
+                                        </select>
+                                    </div>
 
-                                <!-- Break End -->
-                                <div>
-                                    <label class="text-sm">Break End</label>
-                                    <input type="time" name="breakEnd"
-                                        value="<?= $schedule['break_end'] ?? '' ?>"
-                                        class="w-full border rounded px-3 py-2">
-                                </div>
+                                    <div class="flex justify-end gap-2 pt-4">
+                                        <button type="button" data-modal-close
+                                            class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                                        <button type="submit"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                                    </div>
 
-                                <!-- End -->
-                                <div>
-                                    <label class="text-sm">End</label>
-                                    <input type="time" name="endTime"
-                                        value="<?= $schedule['end_time'] ?? '' ?>"
-                                        class="w-full border rounded px-3 py-2">
-                                </div>
+                                </form>
 
-                                <div class="flex justify-end gap-2 pt-4">
-                                    <button type="button" data-modal-close
-                                        class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-blue-600 text-white rounded">
-                                        Save
-                                    </button>
-                                </div>
-
-                            </form>
+                            </div>
                         </div>
-                    </div>
 
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
 
                 </tbody>
             </table>
