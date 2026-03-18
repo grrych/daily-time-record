@@ -2,17 +2,27 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $email = trim($_POST['email'] ?? '');
+    $email     = trim($_POST['email'] ?? '');
     $password  = $_POST['password'] ?? '';
+
+    $errors = [
+        'empty'   => 'Email and password are required.',
+        'invalid' => 'Invalid credentials.'
+    ];
 
     // Basic validation
     if (empty($email) || empty($password)) {
-        setFlash('error', 'Email and password are required.');
+        setFlash('error', $errors['empty']);
+        redirect(BASE_URL . '/login.php');
+    }
+
+    if (strlen($email) > 60 || strlen($password) > 60) {
+        setFlash('error', $errors['invalid']);
         redirect(BASE_URL . '/login.php');
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        setFlash('error', 'Invalid email address.');
+        setFlash('error', $errors['invalid']);
         redirect(BASE_URL . '/login.php');
     }
 
@@ -21,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $intern = getInternByEmail($email);
 
         if (!password_verify($password, $intern['password_hash'])) {
-            setFlash('error', 'Invalid credentials.');
+            setFlash('error', $errors['invalid']);
             redirect(BASE_URL . '/login.php');
         }
 
