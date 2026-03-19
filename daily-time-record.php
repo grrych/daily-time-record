@@ -53,35 +53,90 @@ flashMessage();
             $dtrThisWeek = getDtrThisWeek($intern['intern_id'] ?? '', $weekStart, $weekEnd);
 
             // Calculate Hours Today
-            $hoursToday = 0;
-            if (!empty($todayRecord['time_in']) && !empty($todayRecord['time_out'])) {
-                $start = new DateTime($todayRecord['time_in']);
-                $end   = new DateTime($todayRecord['time_out']);
-                $interval = $start->diff($end);
+            $hoursTodaySeconds = 0;
 
-                // Convert to hours + minutes
-                $hoursToday = $interval->h + ($interval->i / 60);
+            if (!empty($todayRecord['time_in']) && !empty($todayRecord['time_out'])) {
+
+                $timeIn  = new DateTime($todayRecord['time_in']);
+                $timeOut = new DateTime($todayRecord['time_out']);
+
+                // total worked seconds
+                $hoursTodaySeconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+
+                // subtract break
+                if (!empty($todaySchedule['break_start']) && !empty($todaySchedule['break_end'])) {
+                    $breakStart = new DateTime($todaySchedule['break_start']);
+                    $breakEnd   = new DateTime($todaySchedule['break_end']);
+
+                    $hoursTodaySeconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                }
             }
 
-            // Convert Hours Today to hours + minutes
-            $hoursTodayPart   = floor($hoursToday);
-            $minutesTodayPart = round(($hoursToday - $hoursTodayPart) * 60);
+            // convert to hours + minutes
+            $hoursTodayPart   = floor($hoursTodaySeconds / 3600);
+            $minutesTodayPart = floor(($hoursTodaySeconds % 3600) / 60);
 
             // Calculate Hours This Week
-            $totalHoursThisWeek = 0;
+            $totalWeekSeconds = 0;
+
             foreach ($dtrThisWeek as $record) {
+
                 if (empty($record['time_in']) || empty($record['time_out'])) continue;
 
-                $hoursDecimal = !empty($record['total_hours']) ? $record['total_hours'] : 0;
-                $totalHoursThisWeek += $hoursDecimal;
+                $timeIn  = new DateTime($record['time_in']);
+                $timeOut = new DateTime($record['time_out']);
+
+                $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+
+                // get schedule for that day
+                $dayName = date('l', strtotime($record['work_date']));
+                $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+
+                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                    $breakStart = new DateTime($schedule['break_start']);
+                    $breakEnd   = new DateTime($schedule['break_end']);
+
+                    $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                }
+
+                $totalWeekSeconds += $seconds;
             }
 
-            $hoursWeekPart   = floor($totalHoursThisWeek);
-            $minutesWeekPart = round(($totalHoursThisWeek - $hoursWeekPart) * 60);
+            // convert
+            $hoursWeekPart   = floor($totalWeekSeconds / 3600);
+            $minutesWeekPart = floor(($totalWeekSeconds % 3600) / 60);
 
             // Total Hours Rendered (example: from DB or calculation)
-            $totalRendered    = 215; // You can sum from all DTRs
-            $totalRequired    = $intern['required_hours'] ?? 500;
+            $totalRenderedSeconds = 0;
+
+            foreach ($dtrThisWeek as $record) {
+
+                if (empty($record['time_in']) || empty($record['time_out'])) continue;
+
+                $timeIn  = new DateTime($record['time_in']);
+                $timeOut = new DateTime($record['time_out']);
+
+                $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+
+                // subtract break
+                $dayName = date('l', strtotime($record['work_date']));
+                $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+
+                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                    $breakStart = new DateTime($schedule['break_start']);
+                    $breakEnd   = new DateTime($schedule['break_end']);
+
+                    $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                }
+
+                $totalRenderedSeconds += $seconds;
+            }
+
+            // convert
+            $totalRenderedHours   = floor($totalRenderedSeconds / 3600);
+            $totalRenderedMinutes = floor(($totalRenderedSeconds % 3600) / 60);
+
+            $totalRequired = $intern['required_hours'] ?? 500;
             ?>
 
             <h3 class="font-semibold mb-4 text-gray-800">Today's Attendance</h3>
@@ -250,9 +305,9 @@ flashMessage();
             <div class="bg-white p-5 rounded-lg shadow">
                 <p class="text-sm text-gray-500">Total Hours Rendered</p>
                 <h3 class="text-xl font-semibold mt-1">
-                    <?php
-                    echo "{$totalRendered} / {$totalRequired} hrs";
-                    ?>
+                    <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
+                        " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') .
+                        " / {$totalRequired} hrs"; ?>
                 </h3>
             </div>
 
@@ -296,16 +351,28 @@ flashMessage();
 
                                 // Calculate total hours in HH hrs MM mins (ignore seconds)
                                 if ($timeIn && $timeOut) {
-                                    $interval = $timeIn->diff($timeOut);
-                                    $hours   = $interval->h;
-                                    $minutes = $interval->i;
-                                    $totalHours = '';
-                                    if ($hours > 0) $totalHours .= $hours . ' hrs ';
-                                    if ($minutes > 0) $totalHours .= $minutes . ' mins';
-                                    $totalHours = trim($totalHours);
-                                    if ($totalHours === '') $totalHours = '0 mins';
+
+                                    $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+
+                                    $dayName = date('l', strtotime($dtr['work_date']));
+                                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+
+                                    if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                                        $breakStart = new DateTime($schedule['break_start']);
+                                        $breakEnd   = new DateTime($schedule['break_end']);
+
+                                        $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                                    }
+
+                                    $hours   = floor($seconds / 3600);
+                                    $minutes = floor(($seconds % 3600) / 60);
+
+                                    $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '');
+                                    if ($minutes > 0) {
+                                        $totalHours .= " {$minutes} mins";
+                                    }
                                 } else {
-                                    $totalHours = $dtr['total_hours'] ? $dtr['total_hours'] . ' hrs' : '—';
+                                    $totalHours = '—';
                                 }
 
                                 $status = ($timeIn && $timeOut) ? 'Complete' : (! $timeIn && ! $timeOut ? 'Absent' : 'Ongoing');

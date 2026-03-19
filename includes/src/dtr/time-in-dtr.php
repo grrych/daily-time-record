@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
     $timeIn   = $now->format('H:i:s');
 
     try {
+
         $existing = getDtrByWorkDateInternId($workDate, $_SESSION['intern_id']);
 
         if ($existing) {

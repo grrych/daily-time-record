@@ -1,0 +1,2 @@
+[2026-03-19 07:59:39] Exception: No connection could be made because the target machine actively refused it in C:\xampp\htdocs\daily-time-record\includes\src\config\connection.php on line 16
+[2026-03-19 07:59:39] Exception: Call to a member function prepare() on null in C:\xampp\htdocs\daily-time-record\includes\src\intern\intern.php on line 32
