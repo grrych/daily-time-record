@@ -12,17 +12,23 @@ require_once TEMP . '/header.php';
 
 flashMessage();
 
-// ---------- Declare generateTimeOptions once ----------
+// ---------- FIXED generateTimeOptions ----------
 if (!function_exists('generateTimeOptions')) {
     function generateTimeOptions($selected = null)
     {
         $start = strtotime('06:00');
         $end   = strtotime('22:00');
 
+        // ✅ Normalize DB time (removes seconds like 08:00:00 → 08:00)
+        if (!empty($selected)) {
+            $selected = date('H:i', strtotime($selected));
+        }
+
         for ($t = $start; $t <= $end; $t += 15 * 60) {
             $timeValue = date('H:i', $t);
             $timeText  = date('g:i A', $t);
             $selectedAttr = ($selected === $timeValue) ? 'selected' : '';
+
             echo "<option value='{$timeValue}' {$selectedAttr}>{$timeText}</option>";
         }
     }
@@ -106,13 +112,18 @@ if (!function_exists('generateTimeOptions')) {
                             if ($breakStart && $breakEnd) {
                                 $totalSeconds -= (strtotime($breakEnd) - strtotime($breakStart));
                             }
-                            $totalHours = round($totalSeconds / 3600, 2);
+                            $hours = floor($totalSeconds / 3600);
+                            $minutes = floor(($totalSeconds % 3600) / 60);
+
+                            $totalHoursFormatted = "{$hours} hr" . ($hours != 1 ? 's' : '') .
+                                ($minutes > 0 ? " {$minutes} min" . ($minutes != 1 ? 's' : '') : '');
                         }
                         ?>
 
                         <tr>
                             <td class="py-2"><?= $day ?></td>
                             <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
+
                             <td>
                                 <?php if (!empty($schedule) && $breakStart && $breakEnd): ?>
                                     <?= date('g:i A', strtotime($breakStart)); ?> - <?= date('g:i A', strtotime($breakEnd)); ?>
@@ -120,8 +131,15 @@ if (!function_exists('generateTimeOptions')) {
                                     <span class="text-gray-400 italic">—</span>
                                 <?php endif; ?>
                             </td>
+
                             <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
-                            <td><?= !empty($schedule) ? "{$totalHours} hrs" : '<span class="text-gray-400 italic">—</span>'; ?></td>
+
+                            <td>
+                                <?= !empty($schedule)
+                                    ? $totalHoursFormatted
+                                    : '<span class="text-gray-400 italic">—</span>'; ?>
+                            </td>
+
                             <td>
                                 <button
                                     class="<?= empty($schedule) ? 'px-4 py-1 bg-blue-600 text-white rounded' : 'px-3 py-1 border border-blue-600 text-blue-600 rounded' ?>"
@@ -144,6 +162,7 @@ if (!function_exists('generateTimeOptions')) {
 
                                     <input type="hidden" name="day" value="<?= $day ?>">
                                     <input type="hidden" name="<?= empty($schedule) ? 'set' : 'edit' ?>">
+
                                     <?php if (!empty($schedule)): ?>
                                         <input type="hidden" name="scheduleId" value="<?= $schedule['schedule_id'] ?>">
                                     <?php endif; ?>

@@ -2,46 +2,73 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit'])) {
     $scheduleId = trim($_POST['scheduleId'] ?? '');
     $startTime  = trim($_POST['startTime'] ?? '');
+    $breakStart = trim($_POST['breakStart'] ?? '');
+    $breakEnd   = trim($_POST['breakEnd'] ?? '');
     $endTime    = trim($_POST['endTime'] ?? '');
 
-    $validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
     // 1. Validate required fields
-    if (empty($scheduleId) || empty($startTime) || empty($endTime)) {
+    if (empty($scheduleId) || empty($startTime) || empty($breakStart) || empty($breakEnd) || empty($endTime)) {
         setFlash('error', 'All fields are required.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 3. Validate start time
-    if (
-        !preg_match('/^(0[6-9]|1[0-2]):[0-5][0-9]$/', $startTime) &&
-        !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $startTime)
-    ) {
+    // 2. Validate time format (HH:MM 24-hour)
+    $timePattern = '/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
+
+    if (!preg_match($timePattern, $startTime)) {
         setFlash('error', 'Invalid start time format.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 4. Validate end time format and minimum value
-    if (
-        !preg_match('/^(0[6-9]|1[0-2]):[0-5][0-9]$/', $endTime) &&
-        !preg_match('/^(1[3-9]|2[0-3]):[0-5][0-9]$/', $endTime)
-    ) {
-        setFlash('error', 'Invalid end time format. End time must be 13:00 or later.');
+    if (!preg_match($timePattern, $breakStart) || !preg_match($timePattern, $breakEnd)) {
+        setFlash('error', 'Invalid break time format.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 5. Validate end time is after start time
-    $startTimestamp = strtotime($startTime);
-    $endTimestamp   = strtotime($endTime);
+    if (!preg_match($timePattern, $endTime)) {
+        setFlash('error', 'Invalid end time format.');
+        redirect(BASE_URL . '/schedule.php');
+    }
 
+    // 3. Convert to timestamps
+    $startTimestamp      = strtotime($startTime);
+    $breakStartTimestamp = strtotime($breakStart);
+    $breakEndTimestamp   = strtotime($breakEnd);
+    $endTimestamp        = strtotime($endTime);
+
+    // 4. Validate start < end
     if ($endTimestamp <= $startTimestamp) {
         setFlash('error', 'End time must be after start time.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 6. Save schedule
+    // 5. Validate break logic
+    if ($breakStartTimestamp <= $startTimestamp) {
+        setFlash('error', 'Break start must be after start time.');
+        redirect(BASE_URL . '/schedule.php');
+    }
+
+    if ($breakEndTimestamp <= $breakStartTimestamp) {
+        setFlash('error', 'Break end must be after break start.');
+        redirect(BASE_URL . '/schedule.php');
+    }
+
+    if ($breakEndTimestamp >= $endTimestamp) {
+        setFlash('error', 'Break end must be before end time.');
+        redirect(BASE_URL . '/schedule.php');
+    }
+
+    // 6. Save update
     try {
-        updateScheduleByScheduleInternId($startTime, $endTime, $scheduleId, $_SESSION['intern_id']);
+        updateScheduleByScheduleInternId(
+            $startTime,
+            $breakStart,
+            $breakEnd,
+            $endTime,
+            $scheduleId,
+            $_SESSION['intern_id']
+        );
+
         setFlash('success', 'Schedule updated successfully!');
         redirect(BASE_URL . '/schedule.php');
     } catch (Throwable $e) {

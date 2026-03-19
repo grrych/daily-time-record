@@ -1,14 +1,14 @@
 <?php
-function createSchedule($internId, $dayOfWeek, $startTime, $endTime)
+function createSchedule($internId, $dayOfWeek, $startTime, $breakStart, $breakEnd, $endTime)
 {
     $conn     = connection();
 
     try {
-        $sql = "INSERT INTO schedules(intern_id, day_of_week, start_time, end_time)
-                VALUES (?, ?, ?, ?);";
+        $sql = "INSERT INTO schedules(intern_id, day_of_week, start_time, break_start, break_end, end_time)
+                VALUES (?, ?, ?, ?, ?, ?);";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('isss', $internId, $dayOfWeek, $startTime, $endTime);
+        $stmt->bind_param('isssss', $internId, $dayOfWeek, $startTime, $breakStart, $breakEnd, $endTime);
         $stmt->execute();
     } catch (mysqli_sql_exception $e) {
         errorLog($e);
@@ -37,16 +37,16 @@ function getScheduleByDayOfWeek($dayOfWeek, $internId)
     return $schedule;
 }
 
-function updateScheduleByScheduleInternId($startTime, $endTime, $scheduleId, $internId)
+function updateScheduleByScheduleInternId($startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId)
 {
     $conn     = connection();
 
     try {
-        $sql = "UPDATE schedules SET start_time = ?, end_time = ?
+        $sql = "UPDATE schedules SET start_time = ?, break_start = ?, break_end = ?, end_time = ?
                 WHERE schedule_id = ? AND intern_id = ?;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssii', $startTime, $endTime, $scheduleId, $internId);
+        $stmt->bind_param('ssssii', $startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId);
         $stmt->execute();
     } catch (mysqli_sql_exception $e) {
         errorLog($e);
