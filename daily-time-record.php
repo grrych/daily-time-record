@@ -104,8 +104,8 @@ flashMessage();
 
                 if (empty($record['time_in']) || empty($record['time_out'])) continue;
 
-                $timeIn  = new DateTime($record['time_in']);
-                $timeOut = new DateTime($record['time_out']);
+                $timeIn  = new DateTime($record['time_in'], $timeZone);
+                $timeOut = new DateTime($record['time_out'], $timeZone);
 
                 $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
 
@@ -113,11 +113,30 @@ flashMessage();
                 $dayName = date('l', strtotime($record['work_date']));
                 $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
 
-                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
-                    $breakStart = new DateTime($schedule['break_start']);
-                    $breakEnd   = new DateTime($schedule['break_end']);
+                if (!empty($schedule['start_time']) && !empty($schedule['end_time'])) {
+                    $startTime = new DateTime($schedule['start_time'], $timeZone);
+                    $endTime   = new DateTime($schedule['end_time'], $timeZone);
 
-                    $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                    if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
+                        $seconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
+                    }
+
+                    if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
+                        $seconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
+                    }
+                }
+
+                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                    $breakStart = new DateTime($schedule['break_start'], $timeZone);
+                    $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
+
+                    if ($breakStart->getTimestamp() <= $timeOut->getTimestamp() && $breakEnd->getTimestamp() >= $timeOut->getTimestamp()) {
+                        $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
+                    }
+
+                    if ($breakEnd->getTimestamp() <= $timeOut->getTimestamp()) {
+                        $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                    }
                 }
 
                 $totalWeekSeconds += $seconds;
