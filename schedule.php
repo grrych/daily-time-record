@@ -154,7 +154,7 @@ if (!function_exists('generateTimeOptions')) {
                             class="fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
 
                             <div data-modal-content
-                                class="bg-white w-full max-w-md rounded-lg p-6 transform scale-90 opacity-0 transition-all duration-300">
+                                class="bg-white w-full max-w-md rounded-lg p-6 transform scale-90 opacity-0 transition-all duration-200">
 
                                 <h2 class="text-lg font-semibold mb-4"><?= $day ?> Schedule</h2>
 

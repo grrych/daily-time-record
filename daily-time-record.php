@@ -250,7 +250,7 @@ flashMessage();
 
             <div
                 data-modal-content
-                class="bg-white w-full max-w-md rounded-lg shadow-lg transform scale-90 opacity-0 transition-all duration-300">
+                class="bg-white w-full max-w-md rounded-lg shadow-lg transform scale-90 opacity-0 transition-all duration-200">
 
                 <!-- Header -->
                 <div class="flex justify-between items-center border-b px-6 py-4">
