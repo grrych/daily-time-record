@@ -32,7 +32,8 @@ flashMessage();
         <div class="bg-white rounded-lg shadow p-6 mb-6">
 
             <?php
-            $now        = new DateTime('now', new DateTimeZone('Asia/Manila'));
+            $timeZone   = new DateTimeZone('Asia/Manila');
+            $now        = new DateTime('now', $timeZone);
             $workDate   = $now->format('Y-m-d');
             $dayName    = $now->format('l');
 
@@ -57,18 +58,38 @@ flashMessage();
 
             if (!empty($todayRecord['time_in']) && !empty($todayRecord['time_out'])) {
 
-                $timeIn  = new DateTime($todayRecord['time_in']);
-                $timeOut = new DateTime($todayRecord['time_out']);
+                $timeIn  = new DateTime($todayRecord['time_in'], $timeZone);
+                $timeOut = new DateTime($todayRecord['time_out'], $timeZone);
 
                 // total worked seconds
                 $hoursTodaySeconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
 
+                // subtract start time and end time
+                if (!empty($todaySchedule['start_time']) && !empty($todaySchedule['end_time'])) {
+                    $startTime = new DateTime($todaySchedule['start_time'], $timeZone);
+                    $endTime   = new DateTime($todaySchedule['end_time'], $timeZone);
+
+                    if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
+                        $hoursTodaySeconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
+                    }
+
+                    if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
+                        $hoursTodaySeconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
+                    }
+                }
+
                 // subtract break
                 if (!empty($todaySchedule['break_start']) && !empty($todaySchedule['break_end'])) {
-                    $breakStart = new DateTime($todaySchedule['break_start']);
-                    $breakEnd   = new DateTime($todaySchedule['break_end']);
+                    $breakStart = new DateTime($todaySchedule['break_start'], $timeZone);
+                    $breakEnd   = new DateTime($todaySchedule['break_end'], $timeZone);
 
-                    $hoursTodaySeconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                    if ($breakStart->getTimestamp() <= $timeOut->getTimestamp() && $breakEnd->getTimestamp() >= $timeOut->getTimestamp()) {
+                        $hoursTodaySeconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
+                    }
+
+                    if ($breakEnd->getTimestamp() <= $timeOut->getTimestamp()) {
+                        $hoursTodaySeconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                    }
                 }
             }
 
@@ -335,7 +356,6 @@ flashMessage();
                     </thead>
                     <tbody>
                         <?php
-                        $tz         = new DateTimeZone('Asia/Manila');
                         $dtrRecords = getAllDtrByInternId($intern['intern_id']);
                         ?>
                         <?php if (empty($dtrRecords)): ?>
@@ -346,8 +366,8 @@ flashMessage();
                             </tr>
                         <?php else: ?>
                             <?php foreach ($dtrRecords as $dtr):
-                                $timeIn  = !empty($dtr['time_in'])  ? new DateTime($dtr['time_in'], $tz) : null;
-                                $timeOut = !empty($dtr['time_out']) ? new DateTime($dtr['time_out'], $tz) : null;
+                                $timeIn  = !empty($dtr['time_in'])  ? new DateTime($dtr['time_in'], $timeZone) : null;
+                                $timeOut = !empty($dtr['time_out']) ? new DateTime($dtr['time_out'], $timeZone) : null;
 
                                 // Calculate total hours in HH hrs MM mins (ignore seconds)
                                 if ($timeIn && $timeOut) {
