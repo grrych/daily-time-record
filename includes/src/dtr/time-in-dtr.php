@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
     $now      = new DateTime('now', new DateTimeZone('Asia/Manila'));
     $day      = $now->format('l');
     $workDate = $now->format('Y-m-d');
-    $timeIn   = $now->format('H:i:s');
+    $timeIn   = '11:00:00'; // $now->format('H:i:s');
 
     try {
 

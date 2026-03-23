@@ -56,51 +56,59 @@ flashMessage();
             // Get all DTR records
             $dtrRecords  = getAllDtrByInternId($intern['intern_id']);
 
-            // Calculate Hours Today
-            $hoursTodaySeconds = 0;
+            function calculateWorkedSeconds($timeInStr, $timeOutStr, $schedule, $timeZone)
+            {
+                if (empty($timeInStr) || empty($timeOutStr)) return 0;
 
-            if (!empty($todayRecord['time_in']) && !empty($todayRecord['time_out'])) {
+                $timeIn  = new DateTime($timeInStr, $timeZone);
+                $timeOut = new DateTime($timeOutStr, $timeZone);
 
-                $timeIn  = new DateTime($todayRecord['time_in'], $timeZone);
-                $timeOut = new DateTime($todayRecord['time_out'], $timeZone);
+                $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
 
-                // total worked seconds
-                $hoursTodaySeconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+                if ($seconds <= 0) return 0;
 
-                // subtract start time and end time
-                if (!empty($todaySchedule['start_time']) && !empty($todaySchedule['end_time'])) {
-                    $startTime = new DateTime($todaySchedule['start_time'], $timeZone);
-                    $endTime   = new DateTime($todaySchedule['end_time'], $timeZone);
+                // Apply schedule limits - only if schedule exists
+                if (!empty($schedule) && !empty($schedule['start_time']) && !empty($schedule['end_time'])) {
 
-                    if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
-                        $hoursTodaySeconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
+                    $startTime = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['start_time'], $timeZone);
+                    $endTime   = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['end_time'], $timeZone);
+
+                    // Get overlap between actual work time and scheduled work time
+                    $overlapStart = max($timeIn->getTimestamp(), $startTime->getTimestamp());
+                    $overlapEnd   = min($timeOut->getTimestamp(), $endTime->getTimestamp());
+
+                    if ($overlapEnd > $overlapStart) {
+                        $seconds = $overlapEnd - $overlapStart;
+                    } else {
+                        return 0; // No overlap with scheduled hours
                     }
+                }
 
-                    if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
-                        $hoursTodaySeconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
+                // FIXED BREAK LOGIC (overlap-based) - only if schedule exists and has break times
+                if (!empty($schedule) && !empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+
+                    $breakStart = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_start'], $timeZone);
+                    $breakEnd   = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_end'], $timeZone);
+
+                    // Get overlap between work time and break
+                    $overlapStart = max($timeIn->getTimestamp(), $breakStart->getTimestamp());
+                    $overlapEnd   = min($timeOut->getTimestamp(), $breakEnd->getTimestamp());
+
+                    if ($overlapEnd > $overlapStart) {
+                        $seconds -= ($overlapEnd - $overlapStart);
                     }
                 }
 
-                // subtract break
-                if (!empty($todaySchedule['break_start']) && !empty($todaySchedule['break_end'])) {
-                    $breakStart = new DateTime($todaySchedule['break_start'], $timeZone);
-                    $breakEnd   = new DateTime($todaySchedule['break_end'], $timeZone);
-
-                    if (
-                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
-                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
-                    ) {
-                        $hoursTodaySeconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
-                    }
-
-                    if (
-                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
-                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
-                    ) {
-                        $hoursTodaySeconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
-                    }
-                }
+                return max(0, $seconds); // prevent negative
             }
+
+            // Calculate Hours Today
+            $hoursTodaySeconds = calculateWorkedSeconds(
+                $todayRecord['time_in'] ?? null,
+                $todayRecord['time_out'] ?? null,
+                $todaySchedule,
+                $timeZone
+            );
 
             // convert to hours + minutes
             $hoursTodayPart   = floor($hoursTodaySeconds / 3600);
@@ -110,107 +118,38 @@ flashMessage();
             $totalWeekSeconds = 0;
 
             foreach ($dtrThisWeek as $record) {
+                if (!empty($record['time_in']) && !empty($record['time_out'])) {
+                    $dayName = date('l', strtotime($record['work_date']));
+                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
 
-                if (empty($record['time_in']) || empty($record['time_out'])) continue;
-
-                $timeIn  = new DateTime($record['time_in'], $timeZone);
-                $timeOut = new DateTime($record['time_out'], $timeZone);
-
-                $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
-
-                // get schedule for that day
-                $dayName = date('l', strtotime($record['work_date']));
-                $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
-
-                if (!empty($schedule['start_time']) && !empty($schedule['end_time'])) {
-                    $startTime = new DateTime($schedule['start_time'], $timeZone);
-                    $endTime   = new DateTime($schedule['end_time'], $timeZone);
-
-                    if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
-                        $seconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
-                    }
-
-                    if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
-                        $seconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
-                    }
+                    $totalWeekSeconds += calculateWorkedSeconds(
+                        $record['time_in'],
+                        $record['time_out'],
+                        $schedule,
+                        $timeZone
+                    );
                 }
-
-                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
-                    $breakStart = new DateTime($schedule['break_start'], $timeZone);
-                    $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
-
-                    if (
-                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
-                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
-                    ) {
-                        $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
-                    }
-
-                    if (
-                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
-                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
-                    ) {
-                        $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
-                    }
-                }
-
-                $totalWeekSeconds += $seconds;
             }
 
             // convert
             $hoursWeekPart   = floor($totalWeekSeconds / 3600);
             $minutesWeekPart = floor(($totalWeekSeconds % 3600) / 60);
 
-            // Total Hours Rendered (example: from DB or calculation)
+            // Total Hours Rendered (all records)
             $totalRenderedSeconds = 0;
 
             foreach ($dtrRecords as $record) {
+                if (!empty($record['time_in']) && !empty($record['time_out'])) {
+                    $dayName = date('l', strtotime($record['work_date']));
+                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
 
-                if (empty($record['time_in']) || empty($record['time_out'])) continue;
-
-                $timeIn  = new DateTime($record['time_in'], $timeZone);
-                $timeOut = new DateTime($record['time_out'], $timeZone);
-
-                $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
-
-                // subtract break
-                $dayName = date('l', strtotime($record['work_date']));
-                $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
-
-                // subtract start time and end time
-                if (!empty($schedule['start_time']) && !empty($schedule['end_time'])) {
-                    $startTime = new DateTime($schedule['start_time'], $timeZone);
-                    $endTime   = new DateTime($schedule['end_time'], $timeZone);
-
-                    if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
-                        $seconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
-                    }
-
-                    if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
-                        $seconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
-                    }
+                    $totalRenderedSeconds += calculateWorkedSeconds(
+                        $record['time_in'],
+                        $record['time_out'],
+                        $schedule,
+                        $timeZone
+                    );
                 }
-
-                if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
-                    $breakStart = new DateTime($schedule['break_start'], $timeZone);
-                    $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
-
-                    if (
-                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
-                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
-                    ) {
-                        $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
-                    }
-
-                    if (
-                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
-                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
-                    ) {
-                        $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
-                    }
-                }
-
-                $totalRenderedSeconds += $seconds;
             }
 
             // convert
@@ -245,7 +184,7 @@ flashMessage();
 
                     <!-- Time Buttons -->
                     <div class="flex gap-3">
-                        <?php if (empty($todayRecord)): ?>
+                        <?php if (empty($todayRecord) || (empty($todayRecord['time_in']) && empty($todayRecord['time_out']))): ?>
                             <!-- No record yet -->
                             <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeIn" value="">
@@ -253,11 +192,11 @@ flashMessage();
                                     Time In
                                 </button>
                             </form>
-                            <button class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
+                            <button class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed" disabled>
                                 Time Out
                             </button>
 
-                        <?php elseif (empty($todayRecord['time_out'])): ?>
+                        <?php elseif (!empty($todayRecord['time_in']) && empty($todayRecord['time_out'])): ?>
                             <!-- Timed in, not timed out -->
                             <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
                                 Time In
@@ -322,7 +261,7 @@ flashMessage();
                 <!-- Body -->
                 <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
 
-                    <input type="hidden" name="intern_id" value="<?= $intern_id ?>">
+                    <input type="hidden" name="intern_id" value="<?= $intern['intern_id'] ?>">
 
                     <!-- Date -->
                     <div>
@@ -365,8 +304,12 @@ flashMessage();
                 <p class="text-sm text-gray-500">Hours Today</p>
                 <h3 class="text-xl font-semibold mt-1">
                     <?php
-                    echo "{$hoursTodayPart} hr" . ($hoursTodayPart != 1 ? 's' : '') .
-                        " {$minutesTodayPart} min" . ($minutesTodayPart != 1 ? 's' : '');
+                    if ($hoursTodaySeconds > 0) {
+                        echo "{$hoursTodayPart} hr" . ($hoursTodayPart != 1 ? 's' : '') .
+                            " {$minutesTodayPart} min" . ($minutesTodayPart != 1 ? 's' : '');
+                    } else {
+                        echo "0 hrs 0 mins";
+                    }
                     ?>
                 </h3>
             </div>
@@ -376,8 +319,12 @@ flashMessage();
                 <p class="text-sm text-gray-500">Hours This Week</p>
                 <h3 class="text-xl font-semibold mt-1">
                     <?php
-                    echo "{$hoursWeekPart} hr" . ($hoursWeekPart != 1 ? 's' : '') .
-                        " {$minutesWeekPart} min" . ($minutesWeekPart != 1 ? 's' : '');
+                    if ($totalWeekSeconds > 0) {
+                        echo "{$hoursWeekPart} hr" . ($hoursWeekPart != 1 ? 's' : '') .
+                            " {$minutesWeekPart} min" . ($minutesWeekPart != 1 ? 's' : '');
+                    } else {
+                        echo "0 hrs 0 mins";
+                    }
                     ?>
                 </h3>
             </div>
@@ -429,43 +376,16 @@ flashMessage();
                                 // Calculate total hours in HH hrs MM mins (ignore seconds)
                                 if ($timeIn && $timeOut) {
 
-                                    $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
-
                                     $dayName = date('l', strtotime($dtr['work_date']));
                                     $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
 
-                                    // subtract start time and end time
-                                    if (!empty($schedule['start_time']) && !empty($schedule['end_time'])) {
-                                        $startTime = new DateTime($schedule['start_time'], $timeZone);
-                                        $endTime   = new DateTime($schedule['end_time'], $timeZone);
-
-                                        if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
-                                            $seconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
-                                        }
-
-                                        if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
-                                            $seconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
-                                        }
-                                    }
-
-                                    if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
-                                        $breakStart = new DateTime($schedule['break_start'], $timeZone);
-                                        $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
-
-                                        if (
-                                            $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
-                                            $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
-                                        ) {
-                                            $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
-                                        }
-
-                                        if (
-                                            $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
-                                            $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
-                                        ) {
-                                            $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
-                                        }
-                                    }
+                                    // ✅ USE FUNCTION HERE
+                                    $seconds = calculateWorkedSeconds(
+                                        $dtr['time_in'],
+                                        $dtr['time_out'],
+                                        $schedule,
+                                        $timeZone
+                                    );
 
                                     $hours   = floor($seconds / 3600);
                                     $minutes = floor(($seconds % 3600) / 60);
@@ -476,12 +396,17 @@ flashMessage();
                                     $totalHours = '—';
                                 }
 
-                                $status = ($timeIn && $timeOut) ? 'Complete' : (! $timeIn && ! $timeOut ? 'Absent' : 'Ongoing');
-                                $statusClass = match ($status) {
-                                    'Complete' => 'bg-green-100 text-green-700',
-                                    'Ongoing'  => 'bg-yellow-100 text-yellow-700',
-                                    default    => 'bg-red-100 text-red-700',
-                                };
+                                // Determine status
+                                if ($timeIn && $timeOut) {
+                                    $status = 'Complete';
+                                    $statusClass = 'bg-green-100 text-green-700';
+                                } elseif ($timeIn && !$timeOut) {
+                                    $status = 'Ongoing';
+                                    $statusClass = 'bg-yellow-100 text-yellow-700';
+                                } else {
+                                    $status = 'Absent';
+                                    $statusClass = 'bg-red-100 text-red-700';
+                                }
                             ?>
                                 <tr>
                                     <td class="py-2 px-4"><?= !empty($dtr['work_date']) ? date('M j, Y', strtotime($dtr['work_date'])) : '—'; ?></td>
