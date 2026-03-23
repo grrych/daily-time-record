@@ -86,11 +86,17 @@ flashMessage();
                     $breakStart = new DateTime($todaySchedule['break_start'], $timeZone);
                     $breakEnd   = new DateTime($todaySchedule['break_end'], $timeZone);
 
-                    if ($breakStart->getTimestamp() <= $timeOut->getTimestamp() && $breakEnd->getTimestamp() >= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
+                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
+                    ) {
                         $hoursTodaySeconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
                     }
 
-                    if ($breakEnd->getTimestamp() <= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
+                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
+                    ) {
                         $hoursTodaySeconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
                     }
                 }
@@ -133,11 +139,17 @@ flashMessage();
                     $breakStart = new DateTime($schedule['break_start'], $timeZone);
                     $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
 
-                    if ($breakStart->getTimestamp() <= $timeOut->getTimestamp() && $breakEnd->getTimestamp() >= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
+                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
+                    ) {
                         $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
                     }
 
-                    if ($breakEnd->getTimestamp() <= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
+                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
+                    ) {
                         $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
                     }
                 }
@@ -183,11 +195,17 @@ flashMessage();
                     $breakStart = new DateTime($schedule['break_start'], $timeZone);
                     $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
 
-                    if ($breakStart->getTimestamp() <= $timeOut->getTimestamp() && $breakEnd->getTimestamp() >= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
+                        $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
+                    ) {
                         $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
                     }
 
-                    if ($breakEnd->getTimestamp() <= $timeOut->getTimestamp()) {
+                    if (
+                        $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
+                        $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
+                    ) {
                         $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
                     }
                 }
@@ -416,20 +434,44 @@ flashMessage();
                                     $dayName = date('l', strtotime($dtr['work_date']));
                                     $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
 
-                                    if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
-                                        $breakStart = new DateTime($schedule['break_start']);
-                                        $breakEnd   = new DateTime($schedule['break_end']);
+                                    // subtract start time and end time
+                                    if (!empty($schedule['start_time']) && !empty($schedule['end_time'])) {
+                                        $startTime = new DateTime($schedule['start_time'], $timeZone);
+                                        $endTime   = new DateTime($schedule['end_time'], $timeZone);
 
-                                        $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                                        if ($timeIn->getTimestamp() <= $startTime->getTimestamp()) {
+                                            $seconds -= ($startTime->getTimestamp() - $timeIn->getTimestamp());
+                                        }
+
+                                        if ($timeOut->getTimestamp() >= $endTime->getTimestamp()) {
+                                            $seconds -= ($timeOut->getTimestamp() - $endTime->getTimestamp());
+                                        }
+                                    }
+
+                                    if (!empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                                        $breakStart = new DateTime($schedule['break_start'], $timeZone);
+                                        $breakEnd   = new DateTime($schedule['break_end'], $timeZone);
+
+                                        if (
+                                            $breakStart->getTimestamp() <= $timeOut->getTimestamp() &&
+                                            $breakEnd->getTimestamp() >= $timeOut->getTimestamp()
+                                        ) {
+                                            $seconds -= ($timeOut->getTimestamp() - $breakStart->getTimestamp());
+                                        }
+
+                                        if (
+                                            $breakStart->getTimestamp() >= $timeIn->getTimestamp() &&
+                                            $breakEnd->getTimestamp() <= $timeOut->getTimestamp()
+                                        ) {
+                                            $seconds -= ($breakEnd->getTimestamp() - $breakStart->getTimestamp());
+                                        }
                                     }
 
                                     $hours   = floor($seconds / 3600);
                                     $minutes = floor(($seconds % 3600) / 60);
 
-                                    $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '');
-                                    if ($minutes > 0) {
-                                        $totalHours .= " {$minutes} mins";
-                                    }
+                                    $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '') .
+                                        " {$minutes} min" . ($minutes != 1 ? 's' : '');
                                 } else {
                                     $totalHours = '—';
                                 }
