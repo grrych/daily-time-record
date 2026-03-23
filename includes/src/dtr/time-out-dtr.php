@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeOut'])) {
 
     $now      = new DateTime('now', new DateTimeZone('Asia/Manila'));
     $workDate = $now->format('Y-m-d');
-    $timeOut  = '17:10:00'; // $now->format('H:i:s');
+    $timeOut  = '16:50:00'; // $now->format('H:i:s');
 
     try {
 

@@ -36,42 +36,6 @@ function getAllDtrByInternId($internId)
     return $dtr;
 }
 
-function getTotalRenderedHours($internId)
-{
-    $conn = connection();
-    $total = 0;
-    $stmt  = null;
-
-    try {
-        $sql = "SELECT SUM(total_hours) AS total 
-                FROM dtr_records 
-                WHERE intern_id = ?";
-
-        $stmt = $conn->prepare($sql);
-
-        if (!$stmt) {
-            throw new Exception("Failed to prepare statement");
-        }
-
-        $stmt->bind_param('i', $internId);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $row    = $result->fetch_assoc();
-        
-        $total = $row['total'] !== null ? (float)$row['total'] : 0;
-
-    } catch (Exception $e) {
-        errorLog($e);
-    } finally {
-        if ($stmt) {
-            $stmt->close();
-        }
-    }
-
-    return $total;
-}
-
 function getDtrByWorkDateInternId($workDate, $internId)
 {
     $conn = connection();
