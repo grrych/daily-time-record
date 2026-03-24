@@ -1,10 +1,13 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add'])) {
 
-    $now      = new DateTime('now', new DateTimeZone('Asia/Manila'));
-    $day      = $now->format('l');
-    $workDate = $now->format('Y-m-d');
-    $timeIn   = $now->format('H:i:s');
+    $timeIn  = trim($_POST['timeIn'] ?? '');
+    $timeOut = trim($_POST['timeOut'] ?? '');
+
+    if (empty($timeIn) || empty($timeOut)) {
+        setFlash('error', '');
+        redirect(BASE_URL . '/daily-time-record.php');
+    }
 
     try {
 
@@ -27,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
 
         // Create DTR
         createDtr($_SESSION['intern_id'], $workDate, $timeIn, NULL, NULL);
-
     } catch (Throwable $e) {
         errorLog($e);
         setFlash('error', 'Something went wrong. Please try again.');

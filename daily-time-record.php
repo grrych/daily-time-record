@@ -230,9 +230,7 @@ flashMessage();
                     <button
                         class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                         data-modal-open="manualEntryModal"
-                        data-fill-work_date="<?= $workDate ?>"
-                        data-fill-time_in="<?= $todayRecord['time_in'] ?? '' ?>"
-                        data-fill-time_out="<?= $todayRecord['time_out'] ?? '' ?>">
+                        data-fill-work_date="<?= $workDate ?>">
                         Add Manual Entry
                     </button>
 
@@ -262,31 +260,56 @@ flashMessage();
                 <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
 
                     <input type="hidden" name="intern_id" value="<?= $intern['intern_id'] ?>">
+                    <input type="hidden" name="add" value="">
 
                     <!-- Date -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Date</label>
-                        <input type="date" name="work_date" id="work_date" class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                        <input type="date" name="work_date" id="work_date"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
+
+                    <?php
+                    function generateTimeOptions()
+                    {
+                        for ($hour = 6; $hour <= 20; $hour++) {
+                            foreach (['00', '30'] as $minute) {
+                                $time = sprintf('%02d:%s', $hour, $minute);
+                                $display = date("h:i A", strtotime($time));
+                                echo "<option value='$time'>$display</option>";
+                            }
+                        }
+                    }
+                    ?>
 
                     <!-- Time In -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Time In</label>
-                        <input type="time" name="time_in" id="time_in" class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                        <select name="timeIn" id="time_in"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
+                            <option value="">Select Time In</option>
+                            <?php generateTimeOptions(); ?>
+                        </select>
                     </div>
 
                     <!-- Time Out -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Time Out</label>
-                        <input type="time" name="time_out" id="time_out" class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                        <select name="timeOut" id="time_out"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
+                            <option value="">Select Time Out</option>
+                            <?php generateTimeOptions(); ?>
+                        </select>
                     </div>
 
                     <!-- Footer -->
                     <div class="flex justify-end gap-3 pt-4">
-                        <button type="button" data-modal-close class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                        <button type="button" data-modal-close
+                            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                             Cancel
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Save
                         </button>
                     </div>
