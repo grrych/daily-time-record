@@ -285,21 +285,23 @@ flashMessage();
                     <!-- Time In -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Time In</label>
-                        <select name="timeIn" id="time_in"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
-                            <option value="">Select Time In</option>
-                            <?php generateTimeOptions(); ?>
-                        </select>
+                        <input
+                            type="time"
+                            name="timeIn"
+                            id="time_in"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            required>
                     </div>
 
                     <!-- Time Out -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Time Out</label>
-                        <select name="timeOut" id="time_out"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
-                            <option value="">Select Time Out</option>
-                            <?php generateTimeOptions(); ?>
-                        </select>
+                        <input
+                            type="time"
+                            name="timeOut"
+                            id="time_out"
+                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            required>
                     </div>
 
                     <!-- Footer -->
