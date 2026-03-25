@@ -7,6 +7,7 @@ require_once SRC . '/intern/intern.php';
 require_once SRC . '/dtr/dtr.php';
 require_once SRC . '/schedule/schedule.php';
 
+require_once SRC . '/dtr/add-dtr.php';
 require_once SRC . '/dtr/time-in-dtr.php';
 require_once SRC . '/dtr/time-out-dtr.php';
 
@@ -259,13 +260,12 @@ flashMessage();
                 <!-- Body -->
                 <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
 
-                    <input type="hidden" name="intern_id" value="<?= $intern['intern_id'] ?>">
-                    <input type="hidden" name="add" value="">
+                    <input type="hidden" name="addEntry" value="">
 
                     <!-- Date -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Date</label>
-                        <input type="date" name="work_date" id="work_date"
+                        <input type="date" name="workDate" id="work_date"
                             class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
