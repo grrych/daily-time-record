@@ -19,7 +19,7 @@ if (!function_exists('generateTimeOptions')) {
         $start = strtotime('06:00');
         $end   = strtotime('22:00');
 
-        // ✅ Normalize DB time (removes seconds like 08:00:00 → 08:00)
+        // Normalize DB time (removes seconds like 08:00:00 → 08:00)
         if (!empty($selected)) {
             $selected = date('H:i', strtotime($selected));
         }
