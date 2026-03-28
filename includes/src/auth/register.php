@@ -28,15 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Student Number validation
+    // Student number validation
     if (strlen($studentNumber) < 5 || strlen($studentNumber) > 12) {
-        setFlash('error', 'Student Number must be between 5 and 12 characters.');
+        setFlash('error', 'Student number must be between 5 and 12 characters.');
         redirect(BASE_URL . '/register.php');
     }
 
     // Allow only letters, numbers, dash (e.g. 2024-001)
     if (!preg_match('/^[A-Za-z0-9\-]+$/', $studentNumber)) {
-        setFlash('error', 'Student Number can only contain letters, numbers, and dashes.');
+        setFlash('error', 'Student number can only contain letters, numbers, and dashes.');
         redirect(BASE_URL . '/register.php');
     }
 
