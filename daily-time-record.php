@@ -290,6 +290,7 @@ flashMessage();
                             name="timeIn"
                             id="time_in"
                             class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            value="08:00:00"
                             required>
                     </div>
 
@@ -301,6 +302,7 @@ flashMessage();
                             name="timeOut"
                             id="time_out"
                             class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            value="17:00:00"
                             required>
                     </div>
 
