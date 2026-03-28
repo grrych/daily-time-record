@@ -39,7 +39,7 @@ if (!function_exists('generateTimeOptions')) {
 
     <?php require_once TEMP . '/sidebar.php'; ?>
 
-    <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto mb-6">
+    <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto scrollbar-thin mb-6">
 
         <?php require_once TEMP . '/navbar.php'; ?>
 
@@ -66,62 +66,65 @@ if (!function_exists('generateTimeOptions')) {
                     <h2 class="text-lg font-semibold">Set Weekly Schedule</h2>
                 </div>
 
-                <form action="<?= BASE_URL ?>/schedule.php" method="POST" class="p-6 space-y-4">
+                <form action="<?= BASE_URL ?>/schedule.php" method="POST">
 
-                    <!-- Days selection -->
-                    <div>
-                        <label class="text-sm font-medium">Select Days to Apply</label>
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <?php foreach ($daysOfWeek as $day): ?>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day ?>">
-                                    <span><?= $day ?></span>
-                                </label>
-                            <?php endforeach; ?>
+                    <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-thin">
+                        <!-- Days selection -->
+                        <div>
+                            <label class="text-sm font-medium">Select Days to Apply</label>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <?php foreach ($daysOfWeek as $day): ?>
+                                    <label class="flex items-center gap-2 cursor-pointer border px-4 py-3 rounded">
+                                        <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day ?>">
+                                        <span><?= $day ?></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Start Time -->
-                    <div>
-                        <label class="text-sm font-medium">Start Time</label>
-                        <input type="time" name="startTime" class="w-full border rounded px-3 py-2" value="08:00" required>
-                    </div>
+                        <!-- Start Time -->
+                        <div>
+                            <label class="text-sm font-medium">Start Time</label>
+                            <input type="time" name="startTime" class="w-full border rounded px-3 py-2" value="08:00" required>
+                        </div>
 
-                    <!-- Break Start -->
-                    <div>
-                        <label class="text-sm font-medium">Break Start</label>
-                        <input
-                            type="time"
-                            name="breakStart"
-                            class="w-full border rounded px-3 py-2"
-                            value="12:00"
-                            required>
-                    </div>
+                        <!-- Break Start -->
+                        <div>
+                            <label class="text-sm font-medium">Break Start</label>
+                            <input
+                                type="time"
+                                name="breakStart"
+                                class="w-full border rounded px-3 py-2"
+                                value="12:00"
+                                required>
+                        </div>
 
-                    <!-- Break End -->
-                    <div>
-                        <label class="text-sm font-medium">Break End</label>
-                        <input
-                            type="time"
-                            name="breakEnd"
-                            class="w-full border rounded px-3 py-2"
-                            value="13:00"
-                            required>
-                    </div>
+                        <!-- Break End -->
+                        <div>
+                            <label class="text-sm font-medium">Break End</label>
+                            <input
+                                type="time"
+                                name="breakEnd"
+                                class="w-full border rounded px-3 py-2"
+                                value="13:00"
+                                required>
+                        </div>
 
-                    <!-- End Time -->
-                    <div>
-                        <label class="text-sm font-medium">End Time</label>
-                        <input
-                            type="time"
-                            name="endTime"
-                            class="w-full border rounded px-3 py-2"
-                            value="17:00"
-                            required>
+                        <!-- End Time -->
+                        <div>
+                            <label class="text-sm font-medium">End Time</label>
+                            <input
+                                type="time"
+                                name="endTime"
+                                class="w-full border rounded px-3 py-2"
+                                value="17:00"
+                                required>
+                        </div>
+
                     </div>
 
                     <!-- Footer -->
-                    <div class="flex justify-end gap-2 pt-4">
+                    <div class="flex justify-end gap-2 px-6 py-4">
                         <button type="button" data-modal-close class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
                         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Apply Schedule</button>
                     </div>

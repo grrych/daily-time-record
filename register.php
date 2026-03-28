@@ -11,7 +11,7 @@ require_once SRC . '/auth/register.php';
 flashMessage();
 ?>
 
-<div class="min-h-screen w-full flex justify-center items-start py-8 overflow-y-auto bg-gray-50 overflow-auto max-h-screen">
+<div class="max-h-screen w-full flex justify-center items-start py-8 overflow-y-auto scrollbar-thin">
     <div class="shadow-lg bg-white rounded-lg p-8 max-w-md w-full">
         <!-- Header -->
         <div class="text-center mb-6">

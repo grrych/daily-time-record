@@ -21,7 +21,7 @@ flashMessage();
     <?php require_once TEMP . '/sidebar.php'; ?>
 
     <!-- Content -->
-    <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto mb-6">
+    <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto scrollbar-thin mb-6">
 
         <?php require_once TEMP . '/navbar.php'; ?>
 
