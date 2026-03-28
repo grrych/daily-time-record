@@ -10,7 +10,7 @@ function errorLog($error)
         $message = "[" . date('Y-m-d H:i:s') . "] Error: " . $error . PHP_EOL;
     }
 
-    $logDir = __DIR__ . '/logs';
+    $logDir = __DIR__ . '/../logs';
     if (!is_dir($logDir)) {
         mkdir($logDir, 0755, true);
     }
