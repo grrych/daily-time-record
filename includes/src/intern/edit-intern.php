@@ -24,8 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Student ID validation
-    if (!filter_var($studentId, FILTER_VALIDATE_INT) || strlen($studentId) > 12) {
-        setFlash('error', 'Invalid Student ID.');
+    if (strlen($studentId) < 5 || strlen($studentId) > 12) {
+        setFlash('error', 'Student ID must be between 5 and 12 characters.');
+        redirect(BASE_URL . '/profile.php?id=' . ($_SESSION['intern_id'] ?? ''));
+    }
+
+    // Allow only letters, numbers, dash (e.g. 2024-001)
+    if (!preg_match('/^[A-Za-z0-9\-]+$/', $studentId)) {
+        setFlash('error', 'Student ID can only contain letters, numbers, and dashes.');
         redirect(BASE_URL . '/profile.php?id=' . ($_SESSION['intern_id'] ?? ''));
     }
 
