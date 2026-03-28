@@ -60,7 +60,7 @@ if (!function_exists('generateTimeOptions')) {
         <!-- Weekly Schedule Modal -->
         <div id="scheduleModal" data-modal class="fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
 
-            <div data-modal-content class="bg-white w-full max-w-md rounded-lg transform scale-90 opacity-0 transition-all duration-200">
+            <div data-modal-content class="bg-white w-full max-w-lg rounded-lg transform scale-90 opacity-0 transition-all duration-200">
 
                 <div class="flex justify-between items-center border-b px-6 py-4">
                     <h2 class="text-lg font-semibold">Set Weekly Schedule</h2>
