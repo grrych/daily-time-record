@@ -6,7 +6,7 @@ USE dtr_db;
 -- =========================
 CREATE TABLE interns (
     intern_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id VARCHAR(20) NOT NULL,
+    student_number VARCHAR(20) NOT NULL,
     first_name VARCHAR(50),
     middle_name VARCHAR(50) DEFAULT NULL,
     last_name VARCHAR(50),

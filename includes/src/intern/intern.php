@@ -1,14 +1,14 @@
 <?php
-function createIntern($studentId, $firstName, $middleName, $lastName, $email, $requiredHours)
+function createIntern($studentNumber, $firstName, $middleName, $lastName, $email, $requiredHours)
 {
     $conn     = connection();
     $insertId = null;
 
     try {
-        $sql = "INSERT INTO interns(student_id, first_name, middle_name, last_name, email, required_hours)
+        $sql = "INSERT INTO interns(student_number, first_name, middle_name, last_name, email, required_hours)
                 VALUES (?, ?, ?, ?, ?, ?);";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sssssi', $studentId, $firstName, $middleName, $lastName, $email, $requiredHours);
+        $stmt->bind_param('sssssi', $studentNumber, $firstName, $middleName, $lastName, $email, $requiredHours);
         $stmt->execute();
         $insertId = $conn->insert_id;
     } catch (mysqli_sql_exception $e) {
@@ -63,7 +63,7 @@ function getInternById($internId)
 }
 
 function updateInternById(
-    $studentId,
+    $studentNumber,
     $firstName,
     $middleName,
     $lastName,
@@ -75,7 +75,7 @@ function updateInternById(
 
     try {
         $sql = "UPDATE interns
-                SET student_id = ?, 
+                SET student_number = ?, 
                     first_name = ?, 
                     middle_name = ?, 
                     last_name = ?, 
@@ -86,7 +86,7 @@ function updateInternById(
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
             'sssssii',
-            $studentId,
+            $studentNumber,
             $firstName,
             $middleName,
             $lastName,

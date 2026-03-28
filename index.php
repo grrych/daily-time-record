@@ -25,9 +25,9 @@ require_once TEMP . '/header.php';
         <div class="grid md:grid-cols-3 gap-6 mb-6">
 
             <div class="bg-white p-6 rounded-lg shadow">
-                <p class="text-sm text-gray-500">Student ID</p>
+                <p class="text-sm text-gray-500">Student Number</p>
                 <h2 class="text-lg font-semibold">
-                    <?= htmlspecialchars($intern['student_id'] ?? '') ?>
+                    <?= htmlspecialchars($intern['student_number'] ?? '') ?>
                 </h2>
             </div>
 

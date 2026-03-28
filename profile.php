@@ -44,7 +44,7 @@ flashMessage();
                         </h2>
 
                         <p class="text-sm text-gray-500">
-                            Student ID: <?= htmlspecialchars($intern['student_id'] ?? ''); ?>
+                            Student Number: <?= htmlspecialchars($intern['student_number'] ?? ''); ?>
                         </p>
 
                         <p class="text-sm text-gray-500">
@@ -196,16 +196,16 @@ flashMessage();
                     </div>
 
 
-                    <!-- Student ID -->
+                    <!-- Student Number -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">
-                            Student ID
+                            Student Number
                         </label>
 
                         <input
                             type="text"
-                            name="studentId"
-                            value="<?= htmlspecialchars($intern['student_id'] ?? '') ?>"
+                            name="studentNumber"
+                            value="<?= htmlspecialchars($intern['student_number'] ?? '') ?>"
                             class="w-full border rounded px-3 py-2 text-gray-600">
                     </div>
 

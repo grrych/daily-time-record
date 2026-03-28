@@ -1,7 +1,7 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $studentId     = trim($_POST['studentId'] ?? '');
+    $studentNumber = trim($_POST['studentNumber'] ?? '');
     $firstName     = trim($_POST['firstName'] ?? '');
     $middleName    = trim($_POST['middleName'] ?? '');
     $lastName      = trim($_POST['lastName'] ?? '');
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requiredHours = trim($_POST['requiredHours'] ?? '');
 
     $required = [
-        $studentId,
+        $studentNumber,
         $firstName,
         $lastName,
         $email,
@@ -23,15 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Student ID validation
-    if (strlen($studentId) < 5 || strlen($studentId) > 12) {
-        setFlash('error', 'Student ID must be between 5 and 12 characters.');
+    // Student Number validation
+    if (strlen($studentNumber) < 5 || strlen($studentNumber) > 12) {
+        setFlash('error', 'Student Number must be between 5 and 12 characters.');
         redirect(BASE_URL . '/profile.php?id=' . ($_SESSION['intern_id'] ?? ''));
     }
 
     // Allow only letters, numbers, dash (e.g. 2024-001)
-    if (!preg_match('/^[A-Za-z0-9\-]+$/', $studentId)) {
-        setFlash('error', 'Student ID can only contain letters, numbers, and dashes.');
+    if (!preg_match('/^[A-Za-z0-9\-]+$/', $studentNumber)) {
+        setFlash('error', 'Student Number can only contain letters, numbers, and dashes.');
         redirect(BASE_URL . '/profile.php?id=' . ($_SESSION['intern_id'] ?? ''));
     }
 
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Update intern
         updateInternById(
-            $studentId,
+            $studentNumber,
             $firstName,
             $middleName,
             $lastName,
