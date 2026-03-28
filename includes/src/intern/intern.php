@@ -8,7 +8,7 @@ function createIntern($studentId, $firstName, $middleName, $lastName, $email, $r
         $sql = "INSERT INTO interns(student_id, first_name, middle_name, last_name, email, required_hours)
                 VALUES (?, ?, ?, ?, ?, ?);";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('issssi', $studentId, $firstName, $middleName, $lastName, $email, $requiredHours);
+        $stmt->bind_param('sssssi', $studentId, $firstName, $middleName, $lastName, $email, $requiredHours);
         $stmt->execute();
         $insertId = $conn->insert_id;
     } catch (mysqli_sql_exception $e) {
@@ -85,7 +85,7 @@ function updateInternById(
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            'issssii',
+            'sssssii',
             $studentId,
             $firstName,
             $middleName,
