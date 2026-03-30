@@ -76,7 +76,7 @@ if (!function_exists('generateTimeOptions')) {
                                 <?php foreach ($daysOfWeek as $day): ?>
                                     <label class="flex items-center gap-2 cursor-pointer border px-4 py-3 rounded">
                                         <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day ?>">
-                                        <span><?= $day ?></span>
+                                        <span class="select-none"><?= $day ?></span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
