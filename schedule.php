@@ -155,12 +155,12 @@ if (!function_exists('generateTimeOptions')) {
         <!-- Cards -->
         <div class="grid md:grid-cols-3 gap-6 mb-6">
             <?php foreach ($daysOfWeek as $day): ?>
-                <?php $schedule = getInternScheduleDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
+                <?php $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']); ?>
 
                 <div class="bg-white p-5 rounded-lg shadow">
                     <p class="text-sm text-gray-500"><?= $day ?></p>
 
-                    <?php if (empty($schedule)): ?>
+                    <?php if (empty($schedule['day_of_week'])): ?>
                         <p class="text-gray-400 text-sm mt-2">No schedule</p>
                     <?php else: ?>
                         <h3 class="text-lg font-semibold mt-1">
@@ -201,7 +201,7 @@ if (!function_exists('generateTimeOptions')) {
                 <tbody class="divide-y">
 
                     <?php foreach ($daysOfWeek as $day): ?>
-                        <?php $schedule = getInternScheduleDayOfWeekByDayInternId($day, $_SESSION['intern_id']); ?>
+                        <?php $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']); ?>
 
                         <?php
                         if (!empty($schedule)) {

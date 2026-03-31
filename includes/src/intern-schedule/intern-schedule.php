@@ -36,7 +36,7 @@ function getInternScheduleByInternId($internId)
     return $internSchedule;
 }
 
-function getInternScheduleDayOfWeekByDayInternId($day, $internId)
+function getInternScheduleDayOfWeekByDayInternId($internId)
 {
     $conn           = connection();
     $internSchedule = [];
@@ -51,12 +51,12 @@ function getInternScheduleDayOfWeekByDayInternId($day, $internId)
 
                 FROM intern_schedules AS ins
                 LEFT JOIN schedule_templates AS sct ON ins.template_id = sct.template_id
-                WHERE ins.day_of_week = ? AND ins.intern_id = ?
+                WHERE ins.intern_id = ?
                 ORDER BY ins.schedule_id DESC
                 LIMIT 1;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('si', $day, $internId);
+        $stmt->bind_param('i', $internId);
         $stmt->execute();
         $result = $stmt->get_result();
         $internSchedule = $result->fetch_assoc();

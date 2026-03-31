@@ -64,7 +64,7 @@ foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
     if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
 
         $dayName  = date('l', strtotime($dtr['work_date']));
-        $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
+        $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']);
 
         $totalRenderedSeconds += calculateWorkedSeconds(
             $dtr['time_in'],
@@ -193,7 +193,7 @@ $dtrRecords = array_slice($dtrRecords, 0, 5);
                             if ($timeIn && $timeOut) {
 
                                 $dayName  = date('l', strtotime($dtr['work_date']));
-                                $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
+                                $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']);
 
                                 $seconds = calculateWorkedSeconds(
                                     $dtr['time_in'],

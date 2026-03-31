@@ -50,7 +50,7 @@ flashMessage();
 
             // Get today's DTR and schedule
             $todayRecord   = getDtrByWorkDateInternId($workDate, $intern['intern_id'] ?? '');
-            $todaySchedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
+            $todaySchedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
 
             // Get DTRs for the current week
             $dtrThisWeek = getDtrThisWeek($intern['intern_id'] ?? '', $weekStart, $weekEnd);
@@ -122,7 +122,7 @@ flashMessage();
             foreach ($dtrThisWeek as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
+                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
 
                     $totalWeekSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -143,7 +143,7 @@ flashMessage();
             foreach ($dtrRecords as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
+                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
 
                     $totalRenderedSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -407,7 +407,7 @@ flashMessage();
                                 if ($timeIn && $timeOut) {
 
                                     $dayName  = date('l', strtotime($dtr['work_date']));
-                                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
+                                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
 
                                     // ✅ USE FUNCTION HERE
                                     $seconds = calculateWorkedSeconds(
