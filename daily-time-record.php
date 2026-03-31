@@ -5,7 +5,8 @@ requireLogin();
 require_once SRC . '/config/connection.php';
 require_once SRC . '/intern/intern.php';
 require_once SRC . '/dtr/dtr.php';
-require_once SRC . '/schedule/schedule.php';
+require_once SRC . '/schedule-template/schedule-template.php';
+require_once SRC . '/intern-schedule/intern-schedule.php';
 
 require_once SRC . '/dtr/add-dtr.php';
 require_once SRC . '/dtr/time-in-dtr.php';
@@ -49,7 +50,7 @@ flashMessage();
 
             // Get today's DTR and schedule
             $todayRecord   = getDtrByWorkDateInternId($workDate, $intern['intern_id'] ?? '');
-            $todaySchedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+            $todaySchedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
             // Get DTRs for the current week
             $dtrThisWeek = getDtrThisWeek($intern['intern_id'] ?? '', $weekStart, $weekEnd);
@@ -121,7 +122,7 @@ flashMessage();
             foreach ($dtrThisWeek as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalWeekSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -142,7 +143,7 @@ flashMessage();
             foreach ($dtrRecords as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalRenderedSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -252,9 +253,8 @@ flashMessage();
                 class="bg-white w-full max-w-md rounded-lg shadow-lg transform scale-90 opacity-0 transition-all duration-200">
 
                 <!-- Header -->
-                <div class="flex justify-between items-center border-b px-6 py-4">
+                <div class="border-b px-6 py-4">
                     <h2 class="text-lg font-semibold">Manual DTR Entry</h2>
-                    <button data-modal-close class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
                 </div>
 
                 <!-- Body -->
@@ -376,7 +376,7 @@ flashMessage();
                 </button>
             </div>
 
-            <div class="overflow-y-auto max-h-96">
+            <div class="overflow-y-auto scrollbar-thin max-h-96">
                 <table class="w-full text-sm text-left divide-y divide-gray-200">
                     <thead class="bg-gray-50 sticky top-0 z-10 border-b">
                         <tr>
@@ -403,8 +403,8 @@ flashMessage();
                                 // Calculate total hours in HH hrs MM mins (ignore seconds)
                                 if ($timeIn && $timeOut) {
 
-                                    $dayName = date('l', strtotime($dtr['work_date']));
-                                    $schedule = getScheduleByDayOfWeek($dayName, $intern['intern_id']);
+                                    $dayName  = date('l', strtotime($dtr['work_date']));
+                                    $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                                     // ✅ USE FUNCTION HERE
                                     $seconds = calculateWorkedSeconds(
