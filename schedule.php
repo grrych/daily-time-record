@@ -74,7 +74,10 @@ if (!function_exists('generateTimeOptions')) {
                     <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-thin">
                         <!-- Days selection -->
                         <div>
-                            <label class="text-sm font-medium">Select Days to Apply</label>
+                            <label class="text-sm font-medium">
+                                Select Days to Apply
+                                <span class="text-red-600">&ast;</span>
+                            </label>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <?php foreach ($daysOfWeek as $day): ?>
                                     <label class="flex items-center gap-2 cursor-pointer border px-4 py-3 rounded">
@@ -87,13 +90,19 @@ if (!function_exists('generateTimeOptions')) {
 
                         <!-- Start Time -->
                         <div>
-                            <label class="text-sm font-medium">Start Time</label>
+                            <label class="text-sm font-medium">
+                                Start Time
+                                <span class="text-red-600">&ast;</span>
+                            </label>
                             <input type="time" name="startTime" class="w-full border rounded px-3 py-2" value="08:00" required>
                         </div>
 
                         <!-- Break Start -->
                         <div>
-                            <label class="text-sm font-medium">Break Start</label>
+                            <label class="text-sm font-medium">
+                                Break Start
+                                <span class="text-red-600">&ast;</span>
+                            </label>
                             <input
                                 type="time"
                                 name="breakStart"
@@ -104,7 +113,10 @@ if (!function_exists('generateTimeOptions')) {
 
                         <!-- Break End -->
                         <div>
-                            <label class="text-sm font-medium">Break End</label>
+                            <label class="text-sm font-medium">
+                                Break End
+                                <span class="text-red-600">&ast;</span>
+                            </label>
                             <input
                                 type="time"
                                 name="breakEnd"
@@ -115,7 +127,10 @@ if (!function_exists('generateTimeOptions')) {
 
                         <!-- End Time -->
                         <div>
-                            <label class="text-sm font-medium">End Time</label>
+                            <label class="text-sm font-medium">
+                                End Time
+                                <span class="text-red-600">&ast;</span>
+                            </label>
                             <input
                                 type="time"
                                 name="endTime"
@@ -140,7 +155,7 @@ if (!function_exists('generateTimeOptions')) {
         <!-- Cards -->
         <div class="grid md:grid-cols-3 gap-6 mb-6">
             <?php foreach ($daysOfWeek as $day): ?>
-                <?php $schedule = getScheduleByDayOfWeek($day, $intern['intern_id']); ?>
+                <?php $schedule = getInternScheduleDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
 
                 <div class="bg-white p-5 rounded-lg shadow">
                     <p class="text-sm text-gray-500"><?= $day ?></p>
@@ -186,7 +201,7 @@ if (!function_exists('generateTimeOptions')) {
                 <tbody class="divide-y">
 
                     <?php foreach ($daysOfWeek as $day): ?>
-                        <?php $schedule = getScheduleByDayOfWeek($day, $_SESSION['intern_id']); ?>
+                        <?php $schedule = getInternScheduleDayOfWeekByDayInternId($day, $_SESSION['intern_id']); ?>
 
                         <?php
                         if (!empty($schedule)) {
