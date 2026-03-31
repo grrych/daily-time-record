@@ -144,29 +144,6 @@ flashMessage();
 
             </div>
 
-
-            <!-- Progress Section -->
-            <div class="bg-white rounded-lg shadow p-6 mt-6">
-
-                <h3 class="text-lg font-semibold mb-4 text-gray-800">
-                    Internship Progress
-                </h3>
-
-                <div>
-
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">Progress</span>
-                        <span class="font-medium">24%</span>
-                    </div>
-
-                    <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-blue-600 h-3 rounded-full" style="width: 24%"></div>
-                    </div>
-
-                </div>
-
-            </div>
-
         <?php else: ?>
 
             <h1 class="text-2xl font-bold text-gray-800 mb-6">
