@@ -23,7 +23,7 @@ function getAllDtrByInternId($internId)
     try {
         $sql = "SELECT * FROM dtr_records
                 WHERE intern_id = ?
-                ORDER BY work_date ASC;";
+                ORDER BY work_date DESC;";
 
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('i', $internId);

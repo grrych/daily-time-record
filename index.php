@@ -4,8 +4,98 @@ requireLogin();
 
 require_once SRC . '/config/connection.php';
 require_once SRC . '/intern/intern.php';
+require_once SRC . '/dtr/dtr.php';
+require_once SRC . '/schedule-template/schedule-template.php';
+require_once SRC . '/intern-schedule/intern-schedule.php';
 
 require_once TEMP . '/header.php';
+
+$timeZone   = new DateTimeZone('Asia/Manila');
+
+function calculateWorkedSeconds($timeInStr, $timeOutStr, $schedule, $timeZone)
+{
+    if (empty($timeInStr) || empty($timeOutStr)) return 0;
+
+    $timeIn  = new DateTime($timeInStr, $timeZone);
+    $timeOut = new DateTime($timeOutStr, $timeZone);
+
+    $seconds = $timeOut->getTimestamp() - $timeIn->getTimestamp();
+
+    if ($seconds <= 0) return 0;
+
+    // Apply schedule limits - only if schedule exists
+    if (!empty($schedule) && !empty($schedule['start_time']) && !empty($schedule['end_time'])) {
+
+        $startTime = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['start_time'], $timeZone);
+        $endTime   = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['end_time'], $timeZone);
+
+        // Get overlap between actual work time and scheduled work time
+        $overlapStart = max($timeIn->getTimestamp(), $startTime->getTimestamp());
+        $overlapEnd   = min($timeOut->getTimestamp(), $endTime->getTimestamp());
+
+        if ($overlapEnd > $overlapStart) {
+            $seconds = $overlapEnd - $overlapStart;
+        } else {
+            return 0; // No overlap with scheduled hours
+        }
+    }
+
+    // FIXED BREAK LOGIC (overlap-based) - only if schedule exists and has break times
+    if (!empty($schedule) && !empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+
+        $breakStart = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_start'], $timeZone);
+        $breakEnd   = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_end'], $timeZone);
+
+        // Get overlap between work time and break
+        $overlapStart = max($timeIn->getTimestamp(), $breakStart->getTimestamp());
+        $overlapEnd   = min($timeOut->getTimestamp(), $breakEnd->getTimestamp());
+
+        if ($overlapEnd > $overlapStart) {
+            $seconds -= ($overlapEnd - $overlapStart);
+        }
+    }
+
+    return max(0, $seconds); // prevent negative
+}
+
+$totalRenderedSeconds = 0;
+
+foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
+    if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
+
+        $dayName  = date('l', strtotime($dtr['work_date']));
+        $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
+
+        $totalRenderedSeconds += calculateWorkedSeconds(
+            $dtr['time_in'],
+            $dtr['time_out'],
+            $schedule,
+            $timeZone
+        );
+    }
+}
+
+// Convert to hours + minutes
+$totalRenderedHours   = floor($totalRenderedSeconds / 3600);
+$totalRenderedMinutes = floor(($totalRenderedSeconds % 3600) / 60);
+
+$requiredHours = $intern['required_hours'] ?? 500;
+
+// Convert required hours to seconds
+$requiredSeconds = $requiredHours * 3600;
+
+// divide-by-zero
+$progressPercent = ($requiredSeconds > 0)
+    ? ($totalRenderedSeconds / $requiredSeconds) * 100
+    : 0;
+
+// Limit to 100%
+$progressPercent = min(100, $progressPercent);
+
+$dtrRecords = getAllDtrByInternId($_SESSION['intern_id'] ?? '');
+
+// Optional: show only latest 5
+$dtrRecords = array_slice($dtrRecords, 0, 5);
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
@@ -13,7 +103,7 @@ require_once TEMP . '/header.php';
     <?php require_once TEMP . '/sidebar.php'; ?>
 
     <!-- Content -->
-    <main class="flex-1 px-8 py-4">
+    <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto scrollbar-thin mb-6">
 
         <?php require_once TEMP . '/navbar.php'; ?>
 
@@ -40,21 +130,32 @@ require_once TEMP . '/header.php';
 
             <div class="bg-white p-6 rounded-lg shadow">
                 <p class="text-sm text-gray-500">Completed Hours</p>
-                <h2 class="text-lg font-semibold text-green-600">120 hrs</h2>
+                <h2 class="text-lg font-semibold text-green-600">
+                    <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
+                        " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') ?>
+                </h2>
             </div>
 
         </div>
 
         <!-- Progress -->
         <div class="bg-white p-6 rounded-lg shadow mb-6">
-            <h3 class="font-semibold mb-3">Internship Progress</h3>
+
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                Internship Progress
+            </h3>
+
+            <div class="flex justify-between text-sm mb-2">
+                <span class="text-gray-500">Progress</span>
+                <span class="font-medium"><?= round($progressPercent, 1) ?>%</span>
+            </div>
 
             <div class="w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-blue-600 h-4 rounded-full w-1/4"></div>
+                <div class="bg-blue-600 h-4 rounded-full" style="width: <?= $progressPercent ?>%;"></div>
             </div>
 
             <p class="text-sm text-gray-500 mt-2">
-                120 / <?= htmlspecialchars($intern['required_hours'] ?? '') ?> hours completed
+                <?= "{$totalRenderedHours} / {$requiredHours}" ?> hours completed
             </p>
         </div>
 
@@ -77,14 +178,55 @@ require_once TEMP . '/header.php';
                 </thead>
 
                 <tbody class="divide-y">
+                    <?php if (empty($dtrRecords)): ?>
+                        <tr>
+                            <td colspan="4" class="py-4 text-center text-gray-500">
+                                No records found.
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($dtrRecords as $dtr):
 
-                    <tr>
-                        <td class="py-2">2026-03-06</td>
-                        <td>08:00 AM</td>
-                        <td>05:00 PM</td>
-                        <td>8.00</td>
-                    </tr>
+                            $timeIn  = !empty($dtr['time_in'])  ? new DateTime($dtr['time_in'], $timeZone) : null;
+                            $timeOut = !empty($dtr['time_out']) ? new DateTime($dtr['time_out'], $timeZone) : null;
 
+                            if ($timeIn && $timeOut) {
+
+                                $dayName  = date('l', strtotime($dtr['work_date']));
+                                $schedule = getInternScheduleDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
+
+                                $seconds = calculateWorkedSeconds(
+                                    $dtr['time_in'],
+                                    $dtr['time_out'],
+                                    $schedule,
+                                    $timeZone
+                                );
+
+                                $hours   = floor($seconds / 3600);
+                                $minutes = floor(($seconds % 3600) / 60);
+
+                                $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '') .
+                                    " {$minutes} min" . ($minutes != 1 ? 's' : '');
+                            } else {
+                                $totalHours = '—';
+                            }
+                        ?>
+                            <tr>
+                                <td class="py-2">
+                                    <?= !empty($dtr['work_date']) ? date('M j, Y', strtotime($dtr['work_date'])) : '—'; ?>
+                                </td>
+                                <td>
+                                    <?= $timeIn ? $timeIn->format('h:i A') : '—'; ?>
+                                </td>
+                                <td>
+                                    <?= $timeOut ? $timeOut->format('h:i A') : '—'; ?>
+                                </td>
+                                <td>
+                                    <?= $totalHours; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
 
             </table>
