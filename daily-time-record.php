@@ -371,9 +371,12 @@ flashMessage();
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold">Attendance History</h3>
-                <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Export
-                </button>
+                <form action="<?= BASE_URL . '/daily-time-record.php'; ?>" method="POST">
+                    <input type="hidden" name="export" value="">
+                    <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Export
+                    </button>
+                </form>
             </div>
 
             <div class="overflow-y-auto scrollbar-thin max-h-96">
