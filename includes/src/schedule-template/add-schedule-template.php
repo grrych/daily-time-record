@@ -1,6 +1,6 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set'])) {
-    $day        = trim($_POST['day'] ?? '');
+    $daysOfWeek = $_POST['days'] ?? [];
     $startTime  = trim($_POST['startTime'] ?? '');
     $breakStart = trim($_POST['breakStart'] ?? '');
     $breakEnd   = trim($_POST['breakEnd'] ?? '');
@@ -9,16 +9,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set'])) {
     $validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     // 1. Validate required fields
-    if (empty($day) || empty($startTime) || empty($breakStart) || empty($breakEnd) || empty($endTime)) {
-        setFlash('error', 'All fields are required.');
+    if (empty($daysOfWeek)) {
+        setFlash('error', 'Please select at least one day.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 2. Validate day
-    if (!in_array($day, $validDays)) {
-        setFlash('error', 'Invalid day selected.');
+    if (empty($startTime) || empty($breakStart) || empty($breakEnd) || empty($endTime)) {
+        setFlash('error', 'All time fields are required.');
         redirect(BASE_URL . '/schedule.php');
     }
+
+    $trimDaysOfWeek = [];
+
+    // 2. Validate day
+    foreach ($daysOfWeek as $day) {
+        $day = trim($day);
+
+        if (!in_array($day, $validDays)) {
+            setFlash('error', 'Invalid day selected.');
+            redirect(BASE_URL . '/schedule.php');
+        }
+
+        $trimDaysOfWeek[] = $day;
+    }
+
+    $trimDaysOfWeek = array_unique($trimDaysOfWeek);
 
     // 3. Validate time format (HH:MM 24-hour)
     $timePattern = '/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
@@ -68,7 +83,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set'])) {
 
     // 7. Save schedule
     try {
-        createSchedule($_SESSION['intern_id'], $day, $startTime, $breakStart, $breakEnd, $endTime);
+        $isinternScheduleExist = getInternScheduleByInternId($_SESSION['intern_id']);
+
+        if ($isinternScheduleExist) {
+            setFlash('error', 'You already have a schedule set.');
+            redirect(BASE_URL . '/schedule.php');
+        }
+
+        $insertId = createScheduleTemplate(
+            $startTime,
+            $breakStart,
+            $breakEnd,
+            $endTime
+        );
+
+        foreach ($trimDaysOfWeek as $day) {
+            createInternSchedule(
+                $_SESSION['intern_id'],
+                $insertId,
+                $day
+            );
+        }
+
         setFlash('success', 'Schedule set successfully!');
         redirect(BASE_URL . '/schedule.php');
     } catch (Throwable $e) {

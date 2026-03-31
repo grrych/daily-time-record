@@ -1,18 +1,22 @@
 <?php
-function createSchedule($internId, $dayOfWeek, $startTime, $breakStart, $breakEnd, $endTime)
+function createScheduleTemplate($startTime, $breakStart, $breakEnd, $endTime)
 {
     $conn     = connection();
+    $insertId = null;
 
     try {
-        $sql = "INSERT INTO schedules(intern_id, day_of_week, start_time, break_start, break_end, end_time)
-                VALUES (?, ?, ?, ?, ?, ?);";
+        $sql = "INSERT INTO schedule_templates(start_time, break_start, break_end, end_time)
+                VALUES (?, ?, ?, ?);";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('isssss', $internId, $dayOfWeek, $startTime, $breakStart, $breakEnd, $endTime);
+        $stmt->bind_param('ssss', $startTime, $breakStart, $breakEnd, $endTime);
         $stmt->execute();
+
+        $insertId = $conn->insert_id;
     } catch (mysqli_sql_exception $e) {
         errorLog($e);
     }
+    return $insertId;
 }
 
 function getScheduleByDayOfWeek($dayOfWeek, $internId)
@@ -25,7 +29,7 @@ function getScheduleByDayOfWeek($dayOfWeek, $internId)
                 WHERE day_of_week = ? AND intern_id = ?
                 ORDER BY schedule_id DESC 
                 LIMIT 1;";
-                
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('si', $dayOfWeek, $internId);
         $stmt->execute();

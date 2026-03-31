@@ -4,9 +4,10 @@ requireLogin();
 
 require_once SRC . '/config/connection.php';
 require_once SRC . '/intern/intern.php';
-require_once SRC . '/schedule/schedule.php';
-require_once SRC . '/schedule/add-schedule.php';
-require_once SRC . '/schedule/edit-schedule.php';
+require_once SRC . '/schedule-template/schedule-template.php';
+require_once SRC . '/intern-schedule/intern-schedule.php';
+require_once SRC . '/schedule-template/add-schedule-template.php';
+require_once SRC . '/schedule-template/edit-schedule-template.php';
 
 require_once TEMP . '/header.php';
 
@@ -67,6 +68,8 @@ if (!function_exists('generateTimeOptions')) {
                 </div>
 
                 <form action="<?= BASE_URL ?>/schedule.php" method="POST">
+
+                    <input type="hidden" name="set" value="">
 
                     <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-thin">
                         <!-- Days selection -->
