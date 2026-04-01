@@ -269,19 +269,6 @@ flashMessage();
                             class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
-                    <?php
-                    function generateTimeOptions()
-                    {
-                        for ($hour = 6; $hour <= 20; $hour++) {
-                            foreach (['00', '30'] as $minute) {
-                                $time = sprintf('%02d:%s', $hour, $minute);
-                                $display = date("h:i A", strtotime($time));
-                                echo "<option value='$time'>$display</option>";
-                            }
-                        }
-                    }
-                    ?>
-
                     <!-- Time In -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Time In</label>

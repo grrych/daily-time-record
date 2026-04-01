@@ -12,28 +12,6 @@ require_once SRC . '/schedule-template/edit-schedule-template.php';
 require_once TEMP . '/header.php';
 
 flashMessage();
-
-// ---------- FIXED generateTimeOptions ----------
-if (!function_exists('generateTimeOptions')) {
-    function generateTimeOptions($selected = null)
-    {
-        $start = strtotime('06:00');
-        $end   = strtotime('22:00');
-
-        // Normalize DB time (removes seconds like 08:00:00 → 08:00)
-        if (!empty($selected)) {
-            $selected = date('H:i', strtotime($selected));
-        }
-
-        for ($t = $start; $t <= $end; $t += 15 * 60) {
-            $timeValue = date('H:i', $t);
-            $timeText  = date('g:i A', $t);
-            $selectedAttr = ($selected === $timeValue) ? 'selected' : '';
-
-            echo "<option value='{$timeValue}' {$selectedAttr}>{$timeText}</option>";
-        }
-    }
-}
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
