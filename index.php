@@ -92,10 +92,7 @@ $progressPercent = ($requiredSeconds > 0)
 // Limit to 100%
 $progressPercent = min(100, $progressPercent);
 
-$dtrRecords = getAllDtrByInternId($_SESSION['intern_id'] ?? '');
-
-// Optional: show only latest 5
-$dtrRecords = array_slice($dtrRecords, 0, 5);
+$dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
