@@ -396,7 +396,7 @@ flashMessage();
                                     $dayName  = date('l', strtotime($dtr['work_date']));
                                     $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
 
-                                    // ✅ USE FUNCTION HERE
+                                    // USE FUNCTION HERE
                                     $seconds = calculateWorkedSeconds(
                                         $dtr['time_in'],
                                         $dtr['time_out'],
