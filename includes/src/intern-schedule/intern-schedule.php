@@ -51,7 +51,7 @@ function getInternScheduleDayOfWeekByDayInternId($internId)
 
                 FROM intern_schedules AS ins
                 LEFT JOIN schedule_templates AS sct ON ins.template_id = sct.template_id
-                WHERE ins.intern_id = ?
+                WHERE sct.intern_id = ?
                 ORDER BY ins.schedule_id DESC
                 LIMIT 1;";
 
