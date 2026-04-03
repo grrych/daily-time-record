@@ -8,7 +8,7 @@
     <nav class="p-4 space-y-2 text-sm">
         <!-- Dashboard -->
         <a
-            href="<?= htmlspecialchars(BASE_URL); ?>"
+            href="<?= e(BASE_URL); ?>"
             class="flex items-center px-4 py-2 rounded gap-2
             <?= $currentPage === 'index.php' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100' ?>">
             <!-- Home Icon -->
@@ -19,7 +19,7 @@
         </a>
 
         <!-- Daily Time Record -->
-        <a href="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php'); ?>"
+        <a href="<?= e(BASE_URL . '/daily-time-record.php'); ?>"
             class="flex items-center px-4 py-2 rounded gap-2
             <?= $currentPage === 'daily-time-record.php' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100' ?>">
             <!-- Clock Icon -->
@@ -32,7 +32,7 @@
 
         <!-- Schedule -->
         <a
-            href="<?= htmlspecialchars(BASE_URL . '/schedule.php'); ?>"
+            href="<?= e(BASE_URL . '/schedule.php'); ?>"
             class="flex items-center px-4 py-2 rounded gap-2
             <?= $currentPage === 'schedule.php' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100' ?>">
             <!-- Calendar Icon -->
@@ -44,7 +44,7 @@
         </a>
 
         <!-- Profile -->
-        <a href="<?= htmlspecialchars(BASE_URL . '/profile.php'); ?>"
+        <a href="<?= e(BASE_URL . '/profile.php'); ?>"
             class="flex items-center px-4 py-2 rounded gap-2
             <?= $currentPage === 'profile.php' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100' ?>">
             <!-- User Icon -->

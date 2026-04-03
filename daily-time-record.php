@@ -188,7 +188,7 @@ flashMessage();
                     <div class="flex gap-3">
                         <?php if (empty($todayRecord) || (empty($todayRecord['time_in']) && empty($todayRecord['time_out']))): ?>
                             <!-- No record yet -->
-                            <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
+                            <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeIn" value="">
                                 <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
                                     Time In
@@ -203,7 +203,7 @@ flashMessage();
                             <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
                                 Time In
                             </button>
-                            <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
+                            <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeOut" value="">
                                 <button class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">
                                     Time Out
@@ -258,7 +258,7 @@ flashMessage();
                 </div>
 
                 <!-- Body -->
-                <form action="<?= htmlspecialchars(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
+                <form action="<?= e(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
 
                     <input type="hidden" name="addEntry" value="">
 

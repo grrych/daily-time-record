@@ -54,7 +54,7 @@
                     class="flex items-center focus:outline-none transition duration-200 hover:opacity-80">
 
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white text-sm font-semibold">
-                        <?= htmlspecialchars($initials); ?>
+                        <?= e($initials); ?>
                     </div>
                 </button>
 
@@ -65,18 +65,18 @@
                     <!-- User Info -->
                     <div class="px-4 py-3 border-b">
                         <div class="text-sm font-semibold text-gray-800">
-                            <?= htmlspecialchars($intern['first_name'] ?? ''); ?>
-                            <?= htmlspecialchars($intern['middle_name'] ?? ''); ?>
-                            <?= htmlspecialchars($intern['last_name'] ?? ''); ?>
+                            <?= e($intern['first_name'] ?? ''); ?>
+                            <?= e($intern['middle_name'] ?? ''); ?>
+                            <?= e($intern['last_name'] ?? ''); ?>
                         </div>
 
                         <div class="text-xs text-gray-500 truncate">
-                            <?= htmlspecialchars($intern['email'] ?? ''); ?>
+                            <?= e($intern['email'] ?? ''); ?>
                         </div>
                     </div>
 
                     <!-- Profile -->
-                    <a href="<?= htmlspecialchars(BASE_URL . '/profile.php') ?>"
+                    <a href="<?= e(BASE_URL . '/profile.php') ?>"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
 
                         <!-- Profile Icon -->
@@ -96,7 +96,7 @@
                     </a>
 
                     <!-- Logout -->
-                    <a href="<?= htmlspecialchars(BASE_URL . '/login.php') ?>"
+                    <a href="<?= e(BASE_URL . '/login.php') ?>"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
 
                         <!-- Logout Icon -->

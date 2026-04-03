@@ -114,14 +114,14 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
             <div class="bg-white p-6 rounded-lg shadow">
                 <p class="text-sm text-gray-500">Student Number</p>
                 <h2 class="text-lg font-semibold">
-                    <?= htmlspecialchars($intern['student_number'] ?? '') ?>
+                    <?= e($intern['student_number'] ?? '') ?>
                 </h2>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow">
                 <p class="text-sm text-gray-500">Required Hours</p>
                 <h2 class="text-lg font-semibold">
-                    <?= htmlspecialchars($intern['required_hours'] ?? '') ?> hrs
+                    <?= e($intern['required_hours'] ?? '') ?> hrs
                 </h2>
             </div>
 

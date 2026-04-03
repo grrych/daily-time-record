@@ -20,7 +20,7 @@ flashMessage();
         </div>
 
         <!-- Register Form -->
-        <form action="<?= htmlspecialchars(BASE_URL . '/register.php'); ?>" method="POST" class="space-y-4">
+        <form action="<?= e(BASE_URL . '/register.php'); ?>" method="POST" class="space-y-4">
 
             <!-- Student Number -->
             <div>
@@ -144,7 +144,7 @@ flashMessage();
         <!-- Login Link -->
         <p class="text-center text-sm text-gray-600 mt-4">
             Already have an account?
-            <a href="<?= htmlspecialchars(BASE_URL . '/login.php'); ?>" class="text-blue-600 font-medium hover:underline">
+            <a href="<?= e(BASE_URL . '/login.php'); ?>" class="text-blue-600 font-medium hover:underline">
                 Login here
             </a>
         </p>

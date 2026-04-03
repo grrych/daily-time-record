@@ -1,4 +1,8 @@
 <?php
+function e($data) {
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8') . PHP_EOL;
+}
+
 function errorLog($error)
 {
     if ($error instanceof Throwable) {
@@ -50,7 +54,7 @@ function flashMessage()
 {
     if (!empty($_SESSION['flash_message'])) {
         $type = $_SESSION['flash_message']['type'];
-        $message = htmlspecialchars($_SESSION['flash_message']['message']);
+        $message = e($_SESSION['flash_message']['message']);
 
         $colors = [
             'success' => 'bg-green-500',

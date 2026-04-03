@@ -32,30 +32,30 @@ flashMessage();
 
                     <!-- Avatar -->
                     <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white text-lg font-bold">
-                        <?= htmlspecialchars($initials); ?>
+                        <?= e($initials); ?>
                     </div>
 
                     <!-- Basic Info -->
                     <div>
                         <h2 class="text-md font-bold text-gray-800">
-                            <?= htmlspecialchars($intern['first_name'] ?? ''); ?>
-                            <?= htmlspecialchars($intern['middle_name'] ?? ''); ?>
-                            <?= htmlspecialchars($intern['last_name'] ?? ''); ?>
+                            <?= e($intern['first_name'] ?? ''); ?>
+                            <?= e($intern['middle_name'] ?? ''); ?>
+                            <?= e($intern['last_name'] ?? ''); ?>
                         </h2>
 
                         <p class="text-sm text-gray-500">
-                            Student Number: <?= htmlspecialchars($intern['student_number'] ?? ''); ?>
+                            Student Number: <?= e($intern['student_number'] ?? ''); ?>
                         </p>
 
                         <p class="text-sm text-gray-500">
-                            <?= htmlspecialchars($intern['email'] ?? ''); ?>
+                            <?= e($intern['email'] ?? ''); ?>
                         </p>
                     </div>
 
                 </div>
 
                 <!-- Edit Button -->
-                <a href="<?= htmlspecialchars(BASE_URL . '/profile.php?id=' . $intern['intern_id'] ?? ''); ?>"
+                <a href="<?= e(BASE_URL . '/profile.php?id=' . $intern['intern_id'] ?? ''); ?>"
                     class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
                     Edit Profile
                 </a>
@@ -77,28 +77,28 @@ flashMessage();
                         <div class="flex justify-between">
                             <span class="text-gray-500">First Name</span>
                             <span class="font-medium text-gray-800">
-                                <?= htmlspecialchars($intern['first_name'] ?? ''); ?>
+                                <?= e($intern['first_name'] ?? ''); ?>
                             </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Middle Name</span>
                             <span class="font-medium text-gray-800">
-                                <?= htmlspecialchars($intern['middle_name'] ?? ''); ?>
+                                <?= e($intern['middle_name'] ?? ''); ?>
                             </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Last Name</span>
                             <span class="font-medium text-gray-800">
-                                <?= htmlspecialchars($intern['last_name'] ?? ''); ?>
+                                <?= e($intern['last_name'] ?? ''); ?>
                             </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Email</span>
                             <span class="font-medium text-gray-800">
-                                <?= htmlspecialchars($intern['email'] ?? ''); ?>
+                                <?= e($intern['email'] ?? ''); ?>
                             </span>
                         </div>
 
@@ -119,7 +119,7 @@ flashMessage();
                         <div class="flex justify-between">
                             <span class="text-gray-500">Required Hours</span>
                             <span class="font-medium text-gray-800">
-                                <?= htmlspecialchars($intern['required_hours'] ?? ''); ?> hrs
+                                <?= e($intern['required_hours'] ?? ''); ?> hrs
                             </span>
                         </div>
 
@@ -152,7 +152,7 @@ flashMessage();
 
             <div class="bg-white rounded-lg shadow p-6 max-w-screen">
 
-                <form action="<?= htmlspecialchars(BASE_URL . '/profile.php?id=' . $intern['intern_id'] ?? ''); ?>" class="space-y-6" method="POST">
+                <form action="<?= e(BASE_URL . '/profile.php?id=' . $intern['intern_id'] ?? ''); ?>" class="space-y-6" method="POST">
 
                     <!-- Profile Header -->
                     <div class="flex items-center gap-4 mb-4">
@@ -163,9 +163,9 @@ flashMessage();
 
                         <div>
                             <p class="text-md font-bold text-gray-800">
-                                <?= htmlspecialchars($intern['first_name'] ?? ''); ?>
-                                <?= htmlspecialchars($intern['middle_name'] ?? ''); ?>
-                                <?= htmlspecialchars($intern['last_name'] ?? ''); ?>
+                                <?= e($intern['first_name'] ?? ''); ?>
+                                <?= e($intern['middle_name'] ?? ''); ?>
+                                <?= e($intern['last_name'] ?? ''); ?>
                             </p>
                             <p class="text-sm text-gray-500">Update your personal information</p>
                         </div>
@@ -182,7 +182,7 @@ flashMessage();
                         <input
                             type="text"
                             name="studentNumber"
-                            value="<?= htmlspecialchars($intern['student_number'] ?? '') ?>"
+                            value="<?= e($intern['student_number'] ?? '') ?>"
                             class="w-full border rounded px-3 py-2 text-gray-600">
                     </div>
 
@@ -198,7 +198,7 @@ flashMessage();
                             <input
                                 type="text"
                                 name="firstName"
-                                value="<?= htmlspecialchars($intern['first_name'] ?? '') ?>"
+                                value="<?= e($intern['first_name'] ?? '') ?>"
                                 class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
@@ -210,7 +210,7 @@ flashMessage();
                             <input
                                 type="text"
                                 name="middleName"
-                                value="<?= htmlspecialchars($intern['middle_name'] ?? '') ?>"
+                                value="<?= e($intern['middle_name'] ?? '') ?>"
                                 class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
@@ -222,7 +222,7 @@ flashMessage();
                             <input
                                 type="text"
                                 name="lastName"
-                                value="<?= htmlspecialchars($intern['last_name'] ?? '') ?>"
+                                value="<?= e($intern['last_name'] ?? '') ?>"
                                 class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
@@ -238,7 +238,7 @@ flashMessage();
                         <input
                             type="email"
                             name="email"
-                            value="<?= htmlspecialchars($intern['email'] ?? '') ?>"
+                            value="<?= e($intern['email'] ?? '') ?>"
                             class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
                     </div>
 
@@ -252,7 +252,7 @@ flashMessage();
                         <input
                             type="text"
                             name="requiredHours"
-                            value="<?= htmlspecialchars($intern['required_hours'] ?? '') ?>"
+                            value="<?= e($intern['required_hours'] ?? '') ?>"
                             class="w-full border rounded px-3 py-2 text-gray-600">
                     </div>
 
@@ -261,7 +261,7 @@ flashMessage();
                     <div class="flex justify-end gap-3 pt-4">
 
                         <a
-                            href="<?= htmlspecialchars(BASE_URL . '/profile.php') ?>"
+                            href="<?= e(BASE_URL . '/profile.php') ?>"
                             class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                             Cancel
                         </a>
