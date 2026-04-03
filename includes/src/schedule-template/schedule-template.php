@@ -1,15 +1,15 @@
 <?php
-function createScheduleTemplate($startTime, $breakStart, $breakEnd, $endTime)
+function createScheduleTemplate($startTime, $breakStart, $breakEnd, $endTime, $internId)
 {
     $conn     = connection();
     $insertId = null;
 
     try {
-        $sql = "INSERT INTO schedule_templates(start_time, break_start, break_end, end_time)
-                VALUES (?, ?, ?, ?);";
+        $sql = "INSERT INTO schedule_templates(start_time, break_start, break_end, end_time, intern_id)
+                VALUES (?, ?, ?, ?, ?);";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssss', $startTime, $breakStart, $breakEnd, $endTime);
+        $stmt->bind_param('ssssi', $startTime, $breakStart, $breakEnd, $endTime, $internId);
         $stmt->execute();
 
         $insertId = $conn->insert_id;

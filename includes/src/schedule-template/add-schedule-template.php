@@ -94,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set'])) {
             $startTime,
             $breakStart,
             $breakEnd,
-            $endTime
+            $endTime,
+            $_SESSION['intern_id']
         );
 
         foreach ($trimDaysOfWeek as $day) {
             createInternSchedule(
-                $_SESSION['intern_id'],
                 $insertId,
                 $day
             );
