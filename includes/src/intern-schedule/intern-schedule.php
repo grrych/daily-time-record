@@ -16,26 +16,6 @@ function createInternSchedule($templateId, $dayOfWeek)
     }
 }
 
-function getInternScheduleByInternId($internId)
-{
-    $conn           = connection();
-    $internSchedule = [];
-
-    try {
-        $sql = "SELECT * FROM intern_schedules
-                WHERE intern_id = ?;";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $internId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $internSchedule = $result->fetch_assoc();
-    } catch (mysqli_sql_exception $e) {
-        errorLog($e);
-    }
-    return $internSchedule;
-}
-
 function getInternScheduleDayOfWeekByDayInternId($internId)
 {
     $conn           = connection();

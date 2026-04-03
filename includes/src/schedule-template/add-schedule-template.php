@@ -83,9 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set'])) {
 
     // 7. Save schedule
     try {
-        $isinternScheduleExist = getInternScheduleByInternId($_SESSION['intern_id']);
+        $isInternScheduleExist = getScheduleTemplateByInternId($_SESSION['intern_id']);
 
-        if ($isinternScheduleExist) {
+        if ($isInternScheduleExist) {
             setFlash('error', 'You already have a schedule set.');
             redirect(BASE_URL . '/schedule.php');
         }

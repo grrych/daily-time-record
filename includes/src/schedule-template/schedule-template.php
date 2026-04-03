@@ -25,7 +25,7 @@ function getScheduleByDayOfWeek($dayOfWeek, $internId)
     $schedule = [];
 
     try {
-        $sql = "SELECT * FROM schedules
+        $sql = "SELECT * FROM schedule_templates
                 WHERE day_of_week = ? AND intern_id = ?
                 ORDER BY schedule_id DESC 
                 LIMIT 1;";
@@ -41,12 +41,34 @@ function getScheduleByDayOfWeek($dayOfWeek, $internId)
     return $schedule;
 }
 
+function getScheduleTemplateByInternId($internId)
+{
+    $conn     = connection();
+    $schedule = [];
+
+    try {
+        $sql = "SELECT * FROM schedule_templates
+                WHERE intern_id = ?
+                ORDER BY template_id DESC 
+                LIMIT 1;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $internId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $schedule = $result->fetch_assoc();
+    } catch (mysqli_sql_exception $e) {
+        errorLog($e);
+    }
+    return $schedule;
+}
+
 function updateScheduleByScheduleInternId($startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId)
 {
     $conn     = connection();
 
     try {
-        $sql = "UPDATE schedules SET start_time = ?, break_start = ?, break_end = ?, end_time = ?
+        $sql = "UPDATE schedule_templates SET start_time = ?, break_start = ?, break_end = ?, end_time = ?
                 WHERE schedule_id = ? AND intern_id = ?;";
 
         $stmt = $conn->prepare($sql);
