@@ -27,7 +27,7 @@ flashMessage();
 
             <!-- Button to open modal -->
             <div class="mb-4 flex justify-end">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
                     data-modal-open="scheduleModal">
                     Set Weekly Schedule
                 </button>
@@ -125,8 +125,12 @@ flashMessage();
 
                     <!-- Footer -->
                     <div class="flex justify-end gap-2 px-6 py-4">
-                        <button type="button" data-modal-close class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Apply Schedule</button>
+                        <button type="button" data-modal-close class="px-4 py-2 bg-gray-200 rounded cursor-pointer">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer">
+                            Apply Schedule
+                        </button>
                     </div>
 
                 </form>

@@ -6,7 +6,7 @@
         <div class="flex items-center gap-4">
 
             <!-- Sidebar Toggle -->
-            <button class="p-2 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button class="p-2 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                 <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -20,7 +20,7 @@
         <div class="flex items-center gap-4">
 
             <!-- Notifications -->
-            <button class="text-gray-600 hover:text-gray-800">
+            <button class="text-gray-600 hover:text-gray-800 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -51,7 +51,7 @@
                 ?>
                 <!-- Trigger -->
                 <button id="userMenuBtn"
-                    class="flex items-center focus:outline-none transition duration-200 hover:opacity-80">
+                    class="flex items-center focus:outline-none transition duration-200 hover:opacity-80 cursor-pointer">
 
                     <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white text-sm font-semibold">
                         <?= e($initials); ?>
