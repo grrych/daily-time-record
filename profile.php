@@ -183,7 +183,7 @@ flashMessage();
                             type="text"
                             name="studentNumber"
                             value="<?= e($intern['student_number'] ?? '') ?>"
-                            class="w-full border rounded px-3 py-2 text-gray-600">
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-600">
                     </div>
 
 
@@ -199,7 +199,7 @@ flashMessage();
                                 type="text"
                                 name="firstName"
                                 value="<?= e($intern['first_name'] ?? '') ?>"
-                                class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
                         <div>
@@ -211,7 +211,7 @@ flashMessage();
                                 type="text"
                                 name="middleName"
                                 value="<?= e($intern['middle_name'] ?? '') ?>"
-                                class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
                         <div>
@@ -223,7 +223,7 @@ flashMessage();
                                 type="text"
                                 name="lastName"
                                 value="<?= e($intern['last_name'] ?? '') ?>"
-                                class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
 
                     </div>
@@ -239,7 +239,7 @@ flashMessage();
                             type="email"
                             name="email"
                             value="<?= e($intern['email'] ?? '') ?>"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
                     </div>
 
 
@@ -253,7 +253,7 @@ flashMessage();
                             type="text"
                             name="requiredHours"
                             value="<?= e($intern['required_hours'] ?? '') ?>"
-                            class="w-full border rounded px-3 py-2 text-gray-600">
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-600">
                     </div>
 
 

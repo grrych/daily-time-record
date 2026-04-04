@@ -50,7 +50,7 @@ flashMessage();
 
             // Get today's DTR and schedule
             $todayRecord   = getDtrByWorkDateInternId($workDate, $intern['intern_id'] ?? '');
-            $todaySchedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
+            $todaySchedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
             // Get DTRs for the current week
             $dtrThisWeek = getDtrThisWeek($intern['intern_id'] ?? '', $weekStart, $weekEnd);
@@ -122,7 +122,7 @@ flashMessage();
             foreach ($dtrThisWeek as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
+                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalWeekSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -143,7 +143,7 @@ flashMessage();
             foreach ($dtrRecords as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
                     $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
+                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalRenderedSeconds += calculateWorkedSeconds(
                         $record['time_in'],
@@ -253,7 +253,7 @@ flashMessage();
                 class="bg-white w-full max-w-md rounded-lg shadow-lg transform scale-90 opacity-0 transition-all duration-200">
 
                 <!-- Header -->
-                <div class="border-b px-6 py-4">
+                <div class="border-b border-gray-300 px-6 py-4">
                     <h2 class="text-lg font-semibold">Manual DTR Entry</h2>
                 </div>
 
@@ -266,7 +266,7 @@ flashMessage();
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Date</label>
                         <input type="date" name="workDate" id="work_date"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
                     <!-- Time In -->
@@ -276,7 +276,7 @@ flashMessage();
                             type="time"
                             name="timeIn"
                             id="time_in"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200"
                             value="08:00"
                             required>
                     </div>
@@ -288,7 +288,7 @@ flashMessage();
                             type="time"
                             name="timeOut"
                             id="time_out"
-                            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
+                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200"
                             value="17:00"
                             required>
                     </div>
@@ -358,7 +358,7 @@ flashMessage();
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold">Attendance History</h3>
-                <form action="<?= BASE_URL . '/daily-time-record.php'; ?>" method="POST">
+                <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="POST">
                     <input type="hidden" name="export" value="">
                     <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
                         Export
@@ -394,7 +394,7 @@ flashMessage();
                                 if ($timeIn && $timeOut) {
 
                                     $dayName  = date('l', strtotime($dtr['work_date']));
-                                    $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']);
+                                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                                     // USE FUNCTION HERE
                                     $seconds = calculateWorkedSeconds(

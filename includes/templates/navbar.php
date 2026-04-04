@@ -60,10 +60,10 @@
 
                 <!-- Dropdown -->
                 <div id="userDropdown"
-                    class="hidden absolute right-0 mt-3 w-56 bg-white border rounded-lg shadow-lg py-2">
+                    class="hidden absolute right-0 mt-3 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-2">
 
                     <!-- User Info -->
-                    <div class="px-4 py-3 border-b">
+                    <div class="px-4 py-3 border-b border-gray-200">
                         <div class="text-sm font-semibold text-gray-800">
                             <?= e($intern['first_name'] ?? ''); ?>
                             <?= e($intern['middle_name'] ?? ''); ?>

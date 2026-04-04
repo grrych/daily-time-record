@@ -11,7 +11,7 @@ if (!empty($_SESSION['intern_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OJT Daily Time Record</title>
     <link rel="stylesheet" href="<?= e(BASE_URL . '/assets/css/main.css'); ?>">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body class="bg-gray-100 overflow-hidden">

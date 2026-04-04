@@ -1,7 +1,7 @@
 <?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
 <!-- Sidebar -->
 <aside class="w-64 bg-white shadow-lg">
-    <div class="p-6 border-b">
+    <div class="p-6 border-b border-gray-200">
         <h2 class="text-xl font-bold text-gray-800">DTR System</h2>
     </div>
 

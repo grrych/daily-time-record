@@ -41,7 +41,7 @@ flashMessage();
 
             <div data-modal-content class="bg-white w-full max-w-lg rounded-lg transform scale-90 opacity-0 transition-all duration-200">
 
-                <div class="flex justify-between items-center border-b px-6 py-4">
+                <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
                     <h2 class="text-lg font-semibold">Set Weekly Schedule</h2>
                 </div>
 
@@ -58,7 +58,7 @@ flashMessage();
                             </label>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <?php foreach ($daysOfWeek as $day): ?>
-                                    <label class="flex items-center gap-2 cursor-pointer border px-4 py-3 rounded">
+                                    <label class="flex items-center gap-2 cursor-pointer border border-gray-300 px-4 py-3 rounded">
                                         <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day ?>">
                                         <span class="select-none"><?= $day ?></span>
                                     </label>
@@ -72,7 +72,11 @@ flashMessage();
                                 Start Time
                                 <span class="text-red-600">&ast;</span>
                             </label>
-                            <input type="time" name="startTime" class="w-full border rounded px-3 py-2" value="08:00" required>
+                            <input
+                                type="time"
+                                name="startTime" class="w-full border border-gray-300 rounded px-3 py-2" 
+                                value="08:00"
+                                required>
                         </div>
 
                         <!-- Break Start -->
@@ -84,7 +88,7 @@ flashMessage();
                             <input
                                 type="time"
                                 name="breakStart"
-                                class="w-full border rounded px-3 py-2"
+                                class="w-full border border-gray-300 rounded px-3 py-2"
                                 value="12:00"
                                 required>
                         </div>
@@ -98,7 +102,7 @@ flashMessage();
                             <input
                                 type="time"
                                 name="breakEnd"
-                                class="w-full border rounded px-3 py-2"
+                                class="w-full border border-gray-300 rounded px-3 py-2"
                                 value="13:00"
                                 required>
                         </div>
@@ -112,7 +116,7 @@ flashMessage();
                             <input
                                 type="time"
                                 name="endTime"
-                                class="w-full border rounded px-3 py-2"
+                                class="w-full border border-gray-300 rounded px-3 py-2"
                                 value="17:00"
                                 required>
                         </div>
@@ -166,7 +170,7 @@ flashMessage();
             <h3 class="font-semibold mb-4">Weekly Schedule</h3>
 
             <table class="w-full text-sm text-left">
-                <thead class="border-b">
+                <thead class="border-b border-gray-200">
                     <tr>
                         <th class="py-2">Day</th>
                         <th>Start</th>
@@ -200,9 +204,13 @@ flashMessage();
                         }
                         ?>
 
-                        <tr>
-                            <td class="py-2"><?= $day ?></td>
-                            <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">
+                                <?= $day ?>
+                            </td>
+                            <td>
+                                <?= !empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?>
+                            </td>
 
                             <td>
                                 <?php if (!empty($schedule) && $breakStart && $breakEnd): ?>
@@ -212,7 +220,9 @@ flashMessage();
                                 <?php endif; ?>
                             </td>
 
-                            <td><?= !empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?></td>
+                            <td>
+                                <?= !empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?>
+                            </td>
 
                             <td>
                                 <?= !empty($schedule)
