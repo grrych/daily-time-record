@@ -21,8 +21,8 @@ function createScheduleTemplate($startTime, $breakStart, $breakEnd, $endTime, $i
 
 function getScheduleByDayOfWeek($dayOfWeek, $internId)
 {
-    $conn     = connection();
-    $schedule = [];
+    $conn             = connection();
+    $scheduleTemplate = [];
 
     try {
         $sql = "SELECT * FROM schedule_templates
@@ -34,17 +34,17 @@ function getScheduleByDayOfWeek($dayOfWeek, $internId)
         $stmt->bind_param('si', $dayOfWeek, $internId);
         $stmt->execute();
         $result = $stmt->get_result();
-        $schedule = $result->fetch_assoc();
+        $scheduleTemplate = $result->fetch_assoc();
     } catch (mysqli_sql_exception $e) {
         errorLog($e);
     }
-    return $schedule;
+    return $scheduleTemplate;
 }
 
 function getScheduleTemplateByInternId($internId)
 {
-    $conn     = connection();
-    $schedule = [];
+    $conn             = connection();
+    $scheduleTemplate = [];
 
     try {
         $sql = "SELECT * FROM schedule_templates
@@ -56,11 +56,37 @@ function getScheduleTemplateByInternId($internId)
         $stmt->bind_param('i', $internId);
         $stmt->execute();
         $result = $stmt->get_result();
-        $schedule = $result->fetch_assoc();
+        $scheduleTemplate = $result->fetch_assoc();
     } catch (mysqli_sql_exception $e) {
         errorLog($e);
     }
-    return $schedule;
+    return $scheduleTemplate;
+}
+
+function getIScheduleTemplateDayOfWeekByDayInternId($day, $internId)
+{
+    $conn             = connection();
+    $scheduleTemplate = [];
+
+    try {
+        $sql = "SELECT 
+                    sct.*,
+                    ins.day_of_week
+                FROM schedule_templates AS sct
+                LEFT JOIN intern_schedules AS ins ON sct.template_id = ins.template_id
+                WHERE ins.day_of_week = ? AND sct.intern_id = ?
+                ORDER BY sct.template_id DESC
+                LIMIT 1;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('si', $day, $internId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $scheduleTemplate = $result->fetch_assoc();
+    } catch (mysqli_sql_exception $e) {
+        errorLog($e);
+    }
+    return $scheduleTemplate;
 }
 
 function updateScheduleByScheduleInternId($startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId)

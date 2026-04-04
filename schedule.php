@@ -133,7 +133,7 @@ flashMessage();
         <!-- Cards -->
         <div class="grid md:grid-cols-3 gap-6 mb-6">
             <?php foreach ($daysOfWeek as $day): ?>
-                <?php $schedule = getInternScheduleDayOfWeekByDayInternId($intern['intern_id']); ?>
+                <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
 
                 <div class="bg-white p-5 rounded-lg shadow">
                     <p class="text-sm text-gray-500"><?= $day ?></p>
@@ -179,7 +179,7 @@ flashMessage();
                 <tbody class="divide-y">
 
                     <?php foreach ($daysOfWeek as $day): ?>
-                        <?php $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']); ?>
+                        <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
 
                         <?php
                         if (!empty($schedule)) {
