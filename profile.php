@@ -158,7 +158,7 @@ flashMessage();
                     <div class="flex items-center gap-4 mb-4">
 
                         <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-lg text-white font-bold">
-                            <?= $initials; ?>
+                            <?= e($initials); ?>
                         </div>
 
                         <div>
