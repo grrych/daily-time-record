@@ -31,7 +31,7 @@ flashMessage();
                 <input
                     type="email"
                     placeholder="Enter your email"
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100"
                     id="email"
                     name="email">
             </div>
@@ -43,14 +43,17 @@ flashMessage();
                 <input
                     type="password"
                     placeholder="Enter your password"
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100"
                     id="password"
                     name="password">
             </div>
 
             <div class="flex items-center justify-between text-sm">
-                <label class="flex items-center gap-2">
-                    <input name="rememberMe" type="checkbox" class="accent-blue-600">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                        name="rememberMe"
+                        type="checkbox"
+                        class="accent-blue-600">
                     Remember me
                 </label>
 
@@ -61,7 +64,7 @@ flashMessage();
 
             <button
                 type="submit"
-                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer">
                 Login
             </button>
 

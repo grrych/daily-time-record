@@ -33,7 +33,7 @@ flashMessage();
                     id="studentNumber"
                     placeholder="Enter student number"
                     required
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
             </div>
 
             <!-- Name Row -->
@@ -48,7 +48,7 @@ flashMessage();
                         name="firstName"
                         id="firstName"
                         required
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
                 </div>
 
                 <div>
@@ -59,7 +59,7 @@ flashMessage();
                         type="text"
                         name="middleName"
                         id="middleName"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
                 </div>
 
                 <div>
@@ -71,7 +71,7 @@ flashMessage();
                         name="lastName"
                         id="lastName"
                         required
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
                 </div>
 
             </div>
@@ -87,7 +87,7 @@ flashMessage();
                     id="email"
                     placeholder="Enter email"
                     required
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
             </div>
 
             <!-- Required Hours -->
@@ -101,7 +101,7 @@ flashMessage();
                     id="requiredHours"
                     value="500"
                     min="0"
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
             </div>
 
             <!-- Password -->
@@ -115,7 +115,7 @@ flashMessage();
                     id="password"
                     placeholder="Create password"
                     required
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
             </div>
 
             <!-- Confirm Password -->
@@ -129,13 +129,13 @@ flashMessage();
                     id="confirmPassword"
                     placeholder="Confirm password"
                     required
-                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-4 focus:ring-blue-200 duration-100">
             </div>
 
             <!-- Register Button -->
             <button
                 type="submit"
-                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer">
                 Register
             </button>
 
