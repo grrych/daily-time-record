@@ -169,7 +169,7 @@ flashMessage();
                 <div class="bg-gray-50 p-4 rounded text-center">
                     <p class="text-sm text-gray-500 mb-1">Time In</p>
                     <p class="text-xl font-semibold text-gray-800">
-                        <?= !empty($todayRecord['time_in']) ? date('h:i A', strtotime($todayRecord['time_in'])) : '–'; ?>
+                        <?= !empty($todayRecord['time_in']) ? date('h:i A', strtotime($todayRecord['time_in'])) : '&ndash;' . PHP_EOL; ?>
                     </p>
                 </div>
 
@@ -177,7 +177,7 @@ flashMessage();
                 <div class="bg-gray-50 p-4 rounded text-center">
                     <p class="text-sm text-gray-500 mb-1">Time Out</p>
                     <p class="text-xl font-semibold text-gray-800">
-                        <?= !empty($todayRecord['time_out']) ? date('h:i A', strtotime($todayRecord['time_out'])) : '–'; ?>
+                        <?= !empty($todayRecord['time_out']) ? date('h:i A', strtotime($todayRecord['time_out'])) : '&ndash;' . PHP_EOL; ?>
                     </p>
                 </div>
 
@@ -188,7 +188,7 @@ flashMessage();
                     <div class="flex gap-3">
                         <?php if (empty($todayRecord) || (empty($todayRecord['time_in']) && empty($todayRecord['time_out']))): ?>
                             <!-- No record yet -->
-                            <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
+                            <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeIn" value="">
                                 <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 cursor-pointer">
                                     Time In
@@ -203,7 +203,7 @@ flashMessage();
                             <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
                                 Time In
                             </button>
-                            <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="post" class="flex-1">
+                            <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeOut" value="">
                                 <button class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 cursor-pointer">
                                     Time Out
@@ -258,7 +258,7 @@ flashMessage();
                 </div>
 
                 <!-- Body -->
-                <form action="<?= e(BASE_URL . '/daily-time-record.php') ?>" method="POST" class="p-6 space-y-4">
+                <form action="<?= e(BASE_URL . '/daily-time-record.php', false) ?>" method="POST" class="p-6 space-y-4">
 
                     <input type="hidden" name="addEntry" value="">
 
@@ -320,9 +320,9 @@ flashMessage();
                     <?php
                     if ($hoursTodaySeconds > 0) {
                         echo "{$hoursTodayPart} hr" . ($hoursTodayPart != 1 ? 's' : '') .
-                            " {$minutesTodayPart} min" . ($minutesTodayPart != 1 ? 's' : '');
+                            " {$minutesTodayPart} min" . ($minutesTodayPart != 1 ? 's' : '') . PHP_EOL;
                     } else {
-                        echo "0 hrs 0 mins";
+                        echo "0 hrs 0 mins" . PHP_EOL;
                     }
                     ?>
                 </h3>
@@ -335,9 +335,9 @@ flashMessage();
                     <?php
                     if ($totalWeekSeconds > 0) {
                         echo "{$hoursWeekPart} hr" . ($hoursWeekPart != 1 ? 's' : '') .
-                            " {$minutesWeekPart} min" . ($minutesWeekPart != 1 ? 's' : '');
+                            " {$minutesWeekPart} min" . ($minutesWeekPart != 1 ? 's' : '') . PHP_EOL;
                     } else {
-                        echo "0 hrs 0 mins";
+                        echo "0 hrs 0 mins" . PHP_EOL;
                     }
                     ?>
                 </h3>
@@ -349,7 +349,7 @@ flashMessage();
                 <h3 class="text-xl font-semibold mt-1">
                     <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
                         " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') .
-                        " / {$totalRequired} hrs"; ?>
+                        " / {$totalRequired} hrs" . PHP_EOL; ?>
                 </h3>
             </div>
 
@@ -358,7 +358,7 @@ flashMessage();
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold">Attendance History</h3>
-                <form action="<?= e(BASE_URL . '/daily-time-record.php'); ?>" method="POST">
+                <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="POST">
                     <input type="hidden" name="export" value="">
                     <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
                         Export
@@ -433,7 +433,7 @@ flashMessage();
                                     <td class="px-4"><?= $totalHours; ?></td>
                                     <td class="px-4">
                                         <span class="px-2 py-1 text-xs rounded <?= $statusClass ?>">
-                                            <?= $status ?>
+                                            <?= $status . PHP_EOL; ?>
                                         </span>
                                     </td>
                                 </tr>

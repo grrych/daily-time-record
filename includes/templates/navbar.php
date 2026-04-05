@@ -76,7 +76,7 @@
                     </div>
 
                     <!-- Profile -->
-                    <a href="<?= e(BASE_URL . '/profile.php') ?>"
+                    <a href="<?= e(BASE_URL . '/profile.php', false) ?>"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
 
                         <!-- Profile Icon -->
@@ -96,7 +96,7 @@
                     </a>
 
                     <!-- Logout -->
-                    <a href="<?= e(BASE_URL . '/login.php') ?>"
+                    <a href="<?= e(BASE_URL . '/login.php', false) ?>"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
 
                         <!-- Logout Icon -->
