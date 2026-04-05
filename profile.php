@@ -119,7 +119,7 @@ flashMessage();
                         <div class="flex justify-between">
                             <span class="text-gray-500">Required Hours</span>
                             <span class="font-medium text-gray-800">
-                                <?= e($intern['required_hours'] ?? ''); ?> hrs
+                                <?= e($intern['required_hours'] ?? '', false); ?> hrs
                             </span>
                         </div>
 
