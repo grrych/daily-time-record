@@ -64,7 +64,7 @@ foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
     if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
 
         $dayName  = date('l', strtotime($dtr['work_date']));
-        $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']);
+        $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
 
         $totalRenderedSeconds += calculateWorkedSeconds(
             $dtr['time_in'],
@@ -165,7 +165,7 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
 
             <table class="w-full text-sm text-left">
 
-                <thead class="border-b">
+                <thead class="border-b border-gray-200">
                     <tr>
                         <th class="py-2">Date</th>
                         <th>Time In</th>
@@ -190,7 +190,7 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
                             if ($timeIn && $timeOut) {
 
                                 $dayName  = date('l', strtotime($dtr['work_date']));
-                                $schedule = getInternScheduleDayOfWeekByDayInternId($_SESSION['intern_id']);
+                                $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
 
                                 $seconds = calculateWorkedSeconds(
                                     $dtr['time_in'],
@@ -208,7 +208,7 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
                                 $totalHours = '—';
                             }
                         ?>
-                            <tr>
+                            <tr class="border-b border-gray-200">
                                 <td class="py-2">
                                     <?= !empty($dtr['work_date']) ? date('M j, Y', strtotime($dtr['work_date'])) : '—'; ?>
                                 </td>
