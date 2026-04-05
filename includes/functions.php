@@ -71,7 +71,7 @@ function flashMessage()
 
             <span>' . $message . '</span>
 
-            <button onclick="closeFlash()" class="font-bold">✕</button>
+            <button onclick="closeFlash()" class="font-bold cursor-pointer">✕</button>
         </div>
         ';
 
