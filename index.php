@@ -121,7 +121,7 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
             <div class="bg-white p-6 rounded-lg shadow">
                 <p class="text-sm text-gray-500">Required Hours</p>
                 <h2 class="text-lg font-semibold">
-                    <?= e($intern['required_hours'] ?? '') ?> hrs
+                    <?= e($intern['required_hours'] ?? '', false) ?> hrs
                 </h2>
             </div>
 
@@ -129,7 +129,7 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
                 <p class="text-sm text-gray-500">Completed Hours</p>
                 <h2 class="text-lg font-semibold text-green-600">
                     <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
-                        " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') ?>
+                        " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') . PHP_EOL; ?>
                 </h2>
             </div>
 
@@ -205,21 +205,21 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
                                 $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '') .
                                     " {$minutes} min" . ($minutes != 1 ? 's' : '');
                             } else {
-                                $totalHours = '—';
+                                $totalHours = '&mdash;';
                             }
                         ?>
                             <tr class="border-b border-gray-200">
                                 <td class="py-2">
-                                    <?= !empty($dtr['work_date']) ? date('M j, Y', strtotime($dtr['work_date'])) : '—'; ?>
+                                    <?= (!empty($dtr['work_date']) ? date('M j, Y', strtotime($dtr['work_date'])) : '&mdash;') . PHP_EOL; ?>
                                 </td>
                                 <td>
-                                    <?= $timeIn ? $timeIn->format('h:i A') : '—'; ?>
+                                    <?= ($timeIn ? $timeIn->format('h:i A') : '&mdash;') . PHP_EOL; ?>
                                 </td>
                                 <td>
-                                    <?= $timeOut ? $timeOut->format('h:i A') : '—'; ?>
+                                    <?= ($timeOut ? $timeOut->format('h:i A') : '&mdash;') . PHP_EOL; ?>
                                 </td>
                                 <td>
-                                    <?= $totalHours; ?>
+                                    <?= $totalHours . PHP_EOL; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
