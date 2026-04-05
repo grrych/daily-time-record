@@ -59,8 +59,10 @@ flashMessage();
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <?php foreach ($daysOfWeek as $day): ?>
                                     <label class="flex items-center gap-2 cursor-pointer border border-gray-300 px-4 py-3 rounded">
-                                        <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day ?>">
-                                        <span class="select-none"><?= $day ?></span>
+                                        <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day; ?>">
+                                        <span class="select-none">
+                                            <?= $day . PHP_EOL; ?>
+                                        </span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
@@ -74,7 +76,7 @@ flashMessage();
                             </label>
                             <input
                                 type="time"
-                                name="startTime" class="w-full border border-gray-300 rounded px-3 py-2" 
+                                name="startTime" class="w-full border border-gray-300 rounded px-3 py-2"
                                 value="08:00"
                                 required>
                         </div>
@@ -152,7 +154,7 @@ flashMessage();
                         <h3 class="text-lg font-semibold mt-1">
                             <?= date('h:i A', strtotime($schedule['start_time'])); ?>
                             -
-                            <?= date('h:i A', strtotime($schedule['end_time'])); ?>
+                            <?= date('h:i A', strtotime($schedule['end_time'])) . PHP_EOL; ?>
                         </h3>
 
                         <?php if (!empty($schedule['break_start']) && !empty($schedule['break_end'])): ?>
@@ -160,7 +162,7 @@ flashMessage();
                                 Break:
                                 <?= date('h:i A', strtotime($schedule['break_start'])); ?>
                                 -
-                                <?= date('h:i A', strtotime($schedule['break_end'])); ?>
+                                <?= date('h:i A', strtotime($schedule['break_end'])) . PHP_EOL; ?>
                             </p>
                         <?php endif; ?>
                     <?php endif; ?>
@@ -210,28 +212,28 @@ flashMessage();
 
                         <tr class="border-b border-gray-200">
                             <td class="py-2">
-                                <?= $day ?>
+                                <?= $day . PHP_EOL; ?>
                             </td>
                             <td>
-                                <?= !empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?>
+                                <?= (!empty($schedule) ? date('g:i A', strtotime($schedule['start_time'])) : '<span class="text-gray-400 italic">Not set</span>') . PHP_EOL; ?>
                             </td>
 
                             <td>
                                 <?php if (!empty($schedule) && $breakStart && $breakEnd): ?>
-                                    <?= date('g:i A', strtotime($breakStart)); ?> - <?= date('g:i A', strtotime($breakEnd)); ?>
+                                    <?= date('g:i A', strtotime($breakStart)); ?> - <?= date('g:i A', strtotime($breakEnd)) . PHP_EOL; ?>
                                 <?php else: ?>
                                     <span class="text-gray-400 italic">—</span>
                                 <?php endif; ?>
                             </td>
 
                             <td>
-                                <?= !empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>'; ?>
+                                <?= (!empty($schedule) ? date('g:i A', strtotime($schedule['end_time'])) : '<span class="text-gray-400 italic">Not set</span>') . PHP_EOL; ?>
                             </td>
 
                             <td>
-                                <?= !empty($schedule)
+                                <?= (!empty($schedule)
                                     ? $totalHoursFormatted
-                                    : '<span class="text-gray-400 italic">—</span>'; ?>
+                                    : '<span class="text-gray-400 italic">—</span>') . PHP_EOL; ?>
                             </td>
                         </tr>
 
