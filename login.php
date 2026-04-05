@@ -22,7 +22,7 @@ flashMessage();
         </div>
 
         <!-- Login Form -->
-        <form class="space-y-4" action="<?= e(BASE_URL . '/login.php'); ?>" method="POST">
+        <form class="space-y-4" action="<?= e(BASE_URL . '/login.php', false); ?>" method="POST">
 
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
@@ -73,7 +73,7 @@ flashMessage();
         <!-- Registration Link -->
         <p class="text-center text-sm text-gray-600 mt-4">
             Don't have an account?
-            <a href="<?= e(BASE_URL . '/register.php'); ?>" class="text-blue-600 font-medium hover:underline">
+            <a href="<?= e(BASE_URL . '/register.php', false); ?>" class="text-blue-600 font-medium hover:underline">
                 Register here
             </a>
         </p>
