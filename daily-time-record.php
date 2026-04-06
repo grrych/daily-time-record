@@ -37,7 +37,6 @@ flashMessage();
             $timeZone   = new DateTimeZone('Asia/Manila');
             $now        = new DateTime('now', $timeZone);
             $workDate   = $now->format('Y-m-d');
-            $dayName    = $now->format('l');
 
             // Week Start (Monday) and Week End (Saturday)
             $monday     = clone $now;
@@ -49,8 +48,8 @@ flashMessage();
             $weekEnd    = $saturday->format('Y-m-d');
 
             // Get today's DTR and schedule
-            $todayRecord   = getDtrByWorkDateInternId($workDate, $intern['intern_id'] ?? '');
-            $todaySchedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
+            $todayRecord      = getDtrByWorkDateInternId($workDate, $intern['intern_id'] ?? '');
+            $scheduleTemplate = getScheduleTemplateByInternId($intern['intern_id'] ?? '');
 
             // Get DTRs for the current week
             $dtrThisWeek = getDtrThisWeek($intern['intern_id'] ?? '', $weekStart, $weekEnd);
@@ -87,7 +86,7 @@ flashMessage();
                 }
 
                 // FIXED BREAK LOGIC (overlap-based) - only if schedule exists and has break times
-                if (!empty($schedule) && !empty($schedule['break_start']) && !empty($schedule['break_end'])) {
+                if (!empty($schedule) && isset($schedule['break_start']) && isset($schedule['break_end'])) {
 
                     $breakStart = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_start'], $timeZone);
                     $breakEnd   = new DateTime($timeIn->format('Y-m-d') . ' ' . $schedule['break_end'], $timeZone);
@@ -108,7 +107,7 @@ flashMessage();
             $hoursTodaySeconds = calculateWorkedSeconds(
                 $todayRecord['time_in'] ?? null,
                 $todayRecord['time_out'] ?? null,
-                $todaySchedule,
+                $scheduleTemplate,
                 $timeZone
             );
 
@@ -121,13 +120,11 @@ flashMessage();
 
             foreach ($dtrThisWeek as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
-                    $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalWeekSeconds += calculateWorkedSeconds(
                         $record['time_in'],
                         $record['time_out'],
-                        $schedule,
+                        $scheduleTemplate,
                         $timeZone
                     );
                 }
@@ -142,13 +139,11 @@ flashMessage();
 
             foreach ($dtrRecords as $record) {
                 if (!empty($record['time_in']) && !empty($record['time_out'])) {
-                    $dayName = date('l', strtotime($record['work_date']));
-                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
 
                     $totalRenderedSeconds += calculateWorkedSeconds(
                         $record['time_in'],
                         $record['time_out'],
-                        $schedule,
+                        $scheduleTemplate,
                         $timeZone
                     );
                 }
@@ -393,14 +388,11 @@ flashMessage();
                                 // Calculate total hours in HH hrs MM mins (ignore seconds)
                                 if ($timeIn && $timeOut) {
 
-                                    $dayName  = date('l', strtotime($dtr['work_date']));
-                                    $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $intern['intern_id']);
-
                                     // USE FUNCTION HERE
                                     $seconds = calculateWorkedSeconds(
                                         $dtr['time_in'],
                                         $dtr['time_out'],
-                                        $schedule,
+                                        $scheduleTemplate,
                                         $timeZone
                                     );
 

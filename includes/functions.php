@@ -1,5 +1,6 @@
 <?php
-function e($param, $hasNewLine = true) {
+function e($param, $hasNewLine = true)
+{
     return htmlspecialchars($param, ENT_QUOTES, 'UTF-8') . ($hasNewLine ? PHP_EOL : '');
 }
 

@@ -63,13 +63,12 @@ $totalRenderedSeconds = 0;
 foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
     if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
 
-        $dayName  = date('l', strtotime($dtr['work_date']));
-        $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
+        $scheduleTemplate = getScheduleTemplateByInternId($intern['intern_id'] ?? '');
 
         $totalRenderedSeconds += calculateWorkedSeconds(
             $dtr['time_in'],
             $dtr['time_out'],
-            $schedule,
+            $scheduleTemplate,
             $timeZone
         );
     }
@@ -189,13 +188,10 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
 
                             if ($timeIn && $timeOut) {
 
-                                $dayName  = date('l', strtotime($dtr['work_date']));
-                                $schedule = getIScheduleTemplateDayOfWeekByDayInternId($dayName, $_SESSION['intern_id']);
-
                                 $seconds = calculateWorkedSeconds(
                                     $dtr['time_in'],
                                     $dtr['time_out'],
-                                    $schedule,
+                                    $scheduleTemplate,
                                     $timeZone
                                 );
 
