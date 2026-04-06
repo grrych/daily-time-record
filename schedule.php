@@ -100,7 +100,7 @@ flashMessage();
                             <input
                                 type="time"
                                 name="startTime" class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="<?= date('H:i', strtotime($scheduleTemplate['start_time'] ?? '')); ?>"
+                                value="<?= !empty($scheduleTemplate['start_time']) ? date('H:i', strtotime($scheduleTemplate['start_time'] ?? '08:00')) : ''; ?>"
                                 required>
                         </div>
 
@@ -114,7 +114,7 @@ flashMessage();
                                 type="time"
                                 name="breakStart"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="<?= date('H:i', strtotime($scheduleTemplate['break_start'] ?? '')); ?>"
+                                value="<?= !empty($scheduleTemplate['break_start']) ? date('H:i', strtotime($scheduleTemplate['break_start'] ?? '12:00')) : ''; ?>"
                                 required>
                         </div>
 
@@ -128,7 +128,7 @@ flashMessage();
                                 type="time"
                                 name="breakEnd"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="<?= date('H:i', strtotime($scheduleTemplate['break_end'] ?? '')); ?>"
+                                value="<?= !empty($scheduleTemplate['break_end']) ? date('H:i', strtotime($scheduleTemplate['break_end'] ?? '13:00')) : ''; ?>"
                                 required>
                         </div>
 
@@ -142,7 +142,7 @@ flashMessage();
                                 type="time"
                                 name="endTime"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="<?= date('H:i', strtotime($scheduleTemplate['end_time'] ?? '')); ?>"
+                                value="<?= !empty($scheduleTemplate['end_time']) ? date('H:i', strtotime($scheduleTemplate['end_time'] ?? '17:00')) : ''; ?>"
                                 required>
                         </div>
 
