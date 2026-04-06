@@ -125,17 +125,23 @@ flashMessage();
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Completed Hours</span>
-                            <span class="font-medium text-gray-800">120 hrs</span>
+                            <span class="font-medium text-gray-800">
+                                <!-- 120 hrs --> --
+                            </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Remaining Hours</span>
-                            <span class="font-medium text-gray-800">380 hrs</span>
+                            <span class="font-medium text-gray-800">
+                                <!-- 380 hrs --> --
+                            </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-500">Intern Since</span>
-                            <span class="font-medium text-gray-800">January 10, 2025</span>
+                            <span class="font-medium text-gray-800">
+                                <!-- January 10, 2025 --> --
+                            </span>
                         </div>
 
                     </div>
