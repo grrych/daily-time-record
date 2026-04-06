@@ -9,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
     try {
 
         // Check if schedule exists
-        $scheduleExisting = getScheduleByDayOfWeek($day, $_SESSION['intern_id']);
+        $scheduleExisting = getScheduleTemplateByInternId($_SESSION['intern_id']);
 
-        // NO schedule for today
+        // NO schedule
         if (!$scheduleExisting) {
-            setFlash('error', 'No schedule set for today. Please set your schedule first before time in.');
+            setFlash('error', 'No schedule found. Please set your schedule first before timing in.');
             redirect(BASE_URL . '/daily-time-record.php');
         }
 
@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['timeIn'])) {
 
         // Create DTR
         createDtr($_SESSION['intern_id'], $workDate, $timeIn, NULL, NULL);
-
     } catch (Throwable $e) {
         errorLog($e);
         setFlash('error', 'Something went wrong. Please try again.');
