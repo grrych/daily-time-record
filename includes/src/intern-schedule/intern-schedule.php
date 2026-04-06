@@ -15,3 +15,18 @@ function createInternSchedule($templateId, $dayOfWeek)
         errorLog($e);
     }
 }
+
+function deleteInternScheduleByTemplateId($templateId)
+{
+    $conn     = connection();
+
+    try {
+        $sql = "DELETE FROM intern_schedules WHERE template_id = ?;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $templateId);
+        $stmt->execute();
+    } catch (mysqli_sql_exception $e) {
+        errorLog($e);
+    }
+}

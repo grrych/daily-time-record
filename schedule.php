@@ -20,7 +20,13 @@ flashMessage();
 
     <main class="flex-1 px-8 pt-4 pb-14 max-h-screen overflow-y-auto scrollbar-thin mb-6">
 
-        <?php require_once TEMP . '/navbar.php'; ?>
+        <?php
+        require_once TEMP . '/navbar.php';
+
+        $daysOfWeek       = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        $scheduleTemplate = getScheduleTemplateByInternId($intern['intern_id'] ?? '');
+        ?>
 
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">My Schedule</h1>
@@ -29,12 +35,14 @@ flashMessage();
             <div class="mb-4 flex justify-end">
                 <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
                     data-modal-open="scheduleModal">
-                    Set Weekly Schedule
+                    <?php if (empty($scheduleTemplate)): ?>
+                        Set Weekly Schedule
+                    <?php else: ?>
+                        Edit Weekly Schedule
+                    <?php endif; ?>
                 </button>
             </div>
         </div>
-
-        <?php $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; ?>
 
         <!-- Weekly Schedule Modal -->
         <div id="scheduleModal" data-modal class="fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
@@ -42,12 +50,20 @@ flashMessage();
             <div data-modal-content class="bg-white w-full max-w-lg rounded-lg transform scale-90 opacity-0 transition-all duration-200">
 
                 <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
-                    <h2 class="text-lg font-semibold">Set Weekly Schedule</h2>
+                    <?php if (empty($scheduleTemplate)): ?>
+                        <h2 class="text-lg font-semibold">Set Weekly Schedule</h2>
+                    <?php else: ?>
+                        <h2 class="text-lg font-semibold">Edit Weekly Schedule</h2>
+                    <?php endif; ?>
                 </div>
 
                 <form action="<?= BASE_URL ?>/schedule.php" method="POST">
 
-                    <input type="hidden" name="set" value="">
+                    <?php if (empty($scheduleTemplate)): ?>
+                        <input type="hidden" name="set" value="">
+                    <?php else: ?>
+                        <input type="hidden" name="edit" value="">
+                    <?php endif; ?>
 
                     <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto scrollbar-thin">
                         <!-- Days selection -->
@@ -58,8 +74,15 @@ flashMessage();
                             </label>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <?php foreach ($daysOfWeek as $day): ?>
+
+                                    <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id'] ?? ''); ?>
+
                                     <label class="flex items-center gap-2 cursor-pointer border border-gray-300 px-4 py-3 rounded">
-                                        <input class="cursor-pointer" type="checkbox" name="days[]" value="<?= $day; ?>">
+                                        <input
+                                            class="cursor-pointer"
+                                            type="checkbox" name="days[]"
+                                            value="<?= $day; ?>"
+                                            <?= !empty($schedule['day_of_week']) ? 'checked' : ''; ?>>
                                         <span class="select-none">
                                             <?= $day . PHP_EOL; ?>
                                         </span>
@@ -77,7 +100,7 @@ flashMessage();
                             <input
                                 type="time"
                                 name="startTime" class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="08:00"
+                                value="<?= date('H:i', strtotime($scheduleTemplate['start_time'] ?? '')); ?>"
                                 required>
                         </div>
 
@@ -91,7 +114,7 @@ flashMessage();
                                 type="time"
                                 name="breakStart"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="12:00"
+                                value="<?= date('H:i', strtotime($scheduleTemplate['break_start'] ?? '')); ?>"
                                 required>
                         </div>
 
@@ -105,7 +128,7 @@ flashMessage();
                                 type="time"
                                 name="breakEnd"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="13:00"
+                                value="<?= date('H:i', strtotime($scheduleTemplate['break_end'] ?? '')); ?>"
                                 required>
                         </div>
 
@@ -119,7 +142,7 @@ flashMessage();
                                 type="time"
                                 name="endTime"
                                 class="w-full border border-gray-300 rounded px-3 py-2"
-                                value="17:00"
+                                value="<?= date('H:i', strtotime($scheduleTemplate['end_time'] ?? '')); ?>"
                                 required>
                         </div>
 
@@ -158,7 +181,7 @@ flashMessage();
                         </h3>
 
                         <?php if (!empty($schedule['break_start']) && !empty($schedule['break_end'])): ?>
-                            <p class="text-xs text-gray-500 mt-1">
+                            <p class="text-sm text-gray-500 mt-1">
                                 Break:
                                 <?= date('h:i A', strtotime($schedule['break_start'])); ?>
                                 -

@@ -89,16 +89,16 @@ function getIScheduleTemplateDayOfWeekByDayInternId($day, $internId)
     return $scheduleTemplate;
 }
 
-function updateScheduleByScheduleInternId($startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId)
+function updateScheduleTemplateByInternId($startTime, $breakStart, $breakEnd, $endTime, $internId)
 {
     $conn     = connection();
 
     try {
         $sql = "UPDATE schedule_templates SET start_time = ?, break_start = ?, break_end = ?, end_time = ?
-                WHERE schedule_id = ? AND intern_id = ?;";
+                WHERE intern_id = ?;";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ssssii', $startTime, $breakStart, $breakEnd, $endTime, $scheduleId, $internId);
+        $stmt->bind_param('ssssi', $startTime, $breakStart, $breakEnd, $endTime, $internId);
         $stmt->execute();
     } catch (mysqli_sql_exception $e) {
         errorLog($e);

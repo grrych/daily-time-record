@@ -1,18 +1,41 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit'])) {
-    $scheduleId = trim($_POST['scheduleId'] ?? '');
+    $daysOfWeek = $_POST['days'] ?? [];
     $startTime  = trim($_POST['startTime'] ?? '');
     $breakStart = trim($_POST['breakStart'] ?? '');
     $breakEnd   = trim($_POST['breakEnd'] ?? '');
     $endTime    = trim($_POST['endTime'] ?? '');
 
+    $validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
     // 1. Validate required fields
-    if (empty($scheduleId) || empty($startTime) || empty($breakStart) || empty($breakEnd) || empty($endTime)) {
-        setFlash('error', 'All fields are required.');
+    if (empty($daysOfWeek)) {
+        setFlash('error', 'Please select at least one day.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 2. Validate time format (HH:MM 24-hour)
+    if (empty($startTime) || empty($breakStart) || empty($breakEnd) || empty($endTime)) {
+        setFlash('error', 'All time fields are required.');
+        redirect(BASE_URL . '/schedule.php');
+    }
+
+    $trimDaysOfWeek = [];
+
+    // 2. Validate day
+    foreach ($daysOfWeek as $day) {
+        $day = trim($day);
+
+        if (!in_array($day, $validDays)) {
+            setFlash('error', 'Invalid day selected.');
+            redirect(BASE_URL . '/schedule.php');
+        }
+
+        $trimDaysOfWeek[] = $day;
+    }
+
+    $trimDaysOfWeek = array_unique($trimDaysOfWeek);
+
+    // 3. Validate time format (HH:MM 24-hour)
     $timePattern = '/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
 
     if (!preg_match($timePattern, $startTime)) {
@@ -30,19 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit'])) {
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 3. Convert to timestamps
+    // 4. Convert to timestamps
     $startTimestamp      = strtotime($startTime);
     $breakStartTimestamp = strtotime($breakStart);
     $breakEndTimestamp   = strtotime($breakEnd);
     $endTimestamp        = strtotime($endTime);
 
-    // 4. Validate start < end
+    // 5. Validate start < end
     if ($endTimestamp <= $startTimestamp) {
         setFlash('error', 'End time must be after start time.');
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 5. Validate break logic
+    // 6. Validate break logic
     if ($breakStartTimestamp <= $startTimestamp) {
         setFlash('error', 'Break start must be after start time.');
         redirect(BASE_URL . '/schedule.php');
@@ -58,16 +81,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit'])) {
         redirect(BASE_URL . '/schedule.php');
     }
 
-    // 6. Save update
+    // 7. Save schedule
     try {
-        updateScheduleByScheduleInternId(
+        $scheduleTemplate = getScheduleTemplateByInternId($_SESSION['intern_id']);
+
+        if (!$scheduleTemplate) {
+            setFlash('error', 'No schedule found to update.');
+            redirect(BASE_URL . '/schedule.php');
+        }
+
+        $templateId = $scheduleTemplate['template_id'];
+
+        updateScheduleTemplateByInternId(
             $startTime,
             $breakStart,
             $breakEnd,
             $endTime,
-            $scheduleId,
             $_SESSION['intern_id']
         );
+
+        deleteInternScheduleByTemplateId($templateId);
+
+        foreach ($trimDaysOfWeek as $day) {
+            createInternSchedule($templateId, $day);
+        }
 
         setFlash('success', 'Schedule updated successfully!');
         redirect(BASE_URL . '/schedule.php');
