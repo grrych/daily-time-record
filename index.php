@@ -99,6 +99,32 @@ $remainingSeconds = max(0, $requiredSeconds - $totalRenderedSeconds);
 // Convert to hours + minutes
 $remainingHours   = floor($remainingSeconds / 3600);
 $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
+
+$workedDays = 0;
+
+foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
+    if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
+        $workedDays++;
+    }
+}
+
+$avgHoursPerDay = ($workedDays > 0)
+    ? ($totalRenderedSeconds / 3600) / $workedDays
+    : 0;
+
+$remainingHoursDecimal = $remainingSeconds / 3600;
+
+$estimatedDays = ($avgHoursPerDay > 0)
+    ? ceil($remainingHoursDecimal / $avgHoursPerDay)
+    : 0;
+
+$estimatedFinishDate = null;
+
+if ($estimatedDays > 0) {
+    $today = new DateTime('now', $timeZone);
+    $today->modify("+{$estimatedDays} days");
+    $estimatedFinishDate = $today;
+}
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
@@ -114,37 +140,109 @@ $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
             Dashboard
         </h1>
 
-        <!-- Intern Info -->
         <div class="grid md:grid-cols-3 gap-6 mb-6">
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <p class="text-sm text-gray-500">Student Number</p>
-                <h2 class="text-lg font-semibold">
-                    <?= e($intern['student_number'] ?? '') ?>
-                </h2>
+            <!-- Student Number -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Student Number</p>
+                    <h2 class="text-lg font-semibold">
+                        <?= e($intern['student_number'] ?? '') ?>
+                    </h2>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-full">
+                    <!-- ID Card Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 7h16M4 17h16M7 7v10M17 7v10" />
+                    </svg>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <p class="text-sm text-gray-500">Required Hours</p>
-                <h2 class="text-lg font-semibold">
-                    <?= e($intern['required_hours'] ?? '', false) ?> hrs
-                </h2>
+            <!-- Required Hours -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Required Hours</p>
+                    <h2 class="text-lg font-semibold">
+                        <?= e($intern['required_hours'] ?? '', false) ?> hrs
+                    </h2>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <!-- Clock Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <p class="text-sm text-gray-500">Completed Hours</p>
-                <h2 class="text-lg font-semibold text-green-600">
-                    <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
-                        " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') . PHP_EOL; ?>
-                </h2>
+            <!-- Completed Hours -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Completed Hours</p>
+                    <h2 class="text-lg font-semibold text-green-600">
+                        <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
+                            " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') ?>
+                    </h2>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <!-- Check Circle -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2l4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <p class="text-sm text-gray-500">Remaining Hours</p>
-                <h2 class="text-lg font-semibold text-red-600">
-                    <?= "{$remainingHours} hr" . ($remainingHours != 1 ? 's' : '') .
-                        " {$remainingMinutes} min" . ($remainingMinutes != 1 ? 's' : '') ?>
-                </h2>
+            <!-- Remaining Hours -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Remaining Hours</p>
+                    <h2 class="text-lg font-semibold text-red-600">
+                        <?= "{$remainingHours} hr" . ($remainingHours != 1 ? 's' : '') .
+                            " {$remainingMinutes} min" . ($remainingMinutes != 1 ? 's' : '') ?>
+                    </h2>
+                </div>
+                <div class="bg-red-100 p-3 rounded-full">
+                    <!-- Alert / Time Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Estimated Finish -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Estimated Finish</p>
+                    <h2 class="text-lg font-semibold text-blue-600">
+                        <?php if ($remainingSeconds <= 0): ?>
+                            Completed
+                        <?php elseif ($estimatedFinishDate): ?>
+                            <?= $estimatedFinishDate->format('M j, Y') ?>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </h2>
+                </div>
+
+                <div class="<?= $remainingSeconds <= 0 ? 'bg-green-100' : 'bg-blue-100' ?> p-3 rounded-full">
+                    <?php if ($remainingSeconds <= 0): ?>
+                        <!-- Check -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                    <?php else: ?>
+                        <!-- Calendar -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 
+                           00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    <?php endif; ?>
+                </div>
             </div>
 
         </div>
