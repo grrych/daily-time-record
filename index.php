@@ -92,6 +92,13 @@ $progressPercent = ($requiredSeconds > 0)
 $progressPercent = min(100, $progressPercent);
 
 $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
+
+// Remaining seconds
+$remainingSeconds = max(0, $requiredSeconds - $totalRenderedSeconds);
+
+// Convert to hours + minutes
+$remainingHours   = floor($remainingSeconds / 3600);
+$remainingMinutes = floor(($remainingSeconds % 3600) / 60);
 ?>
 
 <div class="min-h-screen bg-gray-100 flex w-full">
@@ -129,6 +136,14 @@ $dtrRecords = getDtrRecentLogByInternId($_SESSION['intern_id'] ?? '');
                 <h2 class="text-lg font-semibold text-green-600">
                     <?= "{$totalRenderedHours} hr" . ($totalRenderedHours != 1 ? 's' : '') .
                         " {$totalRenderedMinutes} min" . ($totalRenderedMinutes != 1 ? 's' : '') . PHP_EOL; ?>
+                </h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow">
+                <p class="text-sm text-gray-500">Remaining Hours</p>
+                <h2 class="text-lg font-semibold text-red-600">
+                    <?= "{$remainingHours} hr" . ($remainingHours != 1 ? 's' : '') .
+                        " {$remainingMinutes} min" . ($remainingMinutes != 1 ? 's' : '') ?>
                 </h2>
             </div>
 
