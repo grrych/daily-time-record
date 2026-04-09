@@ -33,8 +33,12 @@ flashMessage();
 
             <!-- Button to open modal -->
             <div class="mb-4 flex justify-end">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
+                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer flex items-center gap-2"
                     data-modal-open="scheduleModal">
+                    <!-- Schedule/Calendar Icon -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                     <?php if (empty($scheduleTemplate)): ?>
                         Set Weekly Schedule
                     <?php else: ?>
@@ -42,6 +46,7 @@ flashMessage();
                     <?php endif; ?>
                 </button>
             </div>
+
         </div>
 
         <!-- Weekly Schedule Modal -->

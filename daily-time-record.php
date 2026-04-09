@@ -185,32 +185,56 @@ flashMessage();
                             <!-- No record yet -->
                             <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeIn" value="">
-                                <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 cursor-pointer">
+                                <button class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 cursor-pointer flex items-center justify-center gap-2">
+                                    <!-- Clock In Icon -->
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
                                     Time In
                                 </button>
                             </form>
-                            <button class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed" disabled>
+                            <button class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                                <!-- Clock Out Icon (Disabled) -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 Time Out
                             </button>
 
                         <?php elseif (!empty($todayRecord['time_in']) && empty($todayRecord['time_out'])): ?>
                             <!-- Timed in, not timed out -->
-                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
+                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed flex items-center justify-center gap-2">
+                                <!-- Clock In Icon (Disabled) -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 Time In
                             </button>
                             <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="post" class="flex-1">
                                 <input type="hidden" name="timeOut" value="">
-                                <button class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 cursor-pointer">
+                                <button class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 cursor-pointer flex items-center justify-center gap-2">
+                                    <!-- Clock Out Icon -->
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
                                     Time Out
                                 </button>
                             </form>
 
                         <?php else: ?>
                             <!-- Already timed out -->
-                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
+                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed flex items-center justify-center gap-2">
+                                <!-- Clock In Icon (Disabled) -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 Time In
                             </button>
-                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed">
+                            <button disabled class="flex-1 bg-gray-200 text-gray-400 py-2 rounded cursor-not-allowed flex items-center justify-center gap-2">
+                                <!-- Clock Out Icon (Disabled) -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 Time Out
                             </button>
                         <?php endif; ?>
@@ -225,9 +249,13 @@ flashMessage();
 
                     <!-- Manual Entry Button -->
                     <button
-                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
+                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer flex items-center justify-center gap-2"
                         data-modal-open="manualEntryModal"
                         data-fill-work_date="<?= $workDate ?>">
+                        <!-- Manual Entry Icon (Pencil/Edit) -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
                         Add Manual Entry
                     </button>
 
@@ -355,7 +383,11 @@ flashMessage();
                 <h3 class="font-semibold">Attendance History</h3>
                 <form action="<?= e(BASE_URL . '/daily-time-record.php', false); ?>" method="POST">
                     <input type="hidden" name="export" value="">
-                    <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer">
+                    <button class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer flex items-center gap-2">
+                        <!-- Export Icon (Download) -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                         Export
                     </button>
                 </form>
