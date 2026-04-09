@@ -63,7 +63,7 @@ function getScheduleTemplateByInternId($internId)
     return $scheduleTemplate;
 }
 
-function getIScheduleTemplateDayOfWeekByDayInternId($day, $internId)
+function getScheduleTemplateDayOfWeekByDayInternId($day, $internId)
 {
     $conn             = connection();
     $scheduleTemplate = [];

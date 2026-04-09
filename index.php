@@ -58,12 +58,12 @@ function calculateWorkedSeconds($timeInStr, $timeOutStr, $schedule, $timeZone)
     return max(0, $seconds); // prevent negative
 }
 
+$scheduleTemplate = getScheduleTemplateByInternId($intern['intern_id'] ?? '');
+
 $totalRenderedSeconds = 0;
 
-foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
+foreach (getAllDtrByInternId($intern['intern_id'] ?? '' ?? '') as $dtr) {
     if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
-
-        $scheduleTemplate = getScheduleTemplateByInternId($intern['intern_id'] ?? '');
 
         $totalRenderedSeconds += calculateWorkedSeconds(
             $dtr['time_in'],
@@ -100,30 +100,103 @@ $remainingSeconds = max(0, $requiredSeconds - $totalRenderedSeconds);
 $remainingHours   = floor($remainingSeconds / 3600);
 $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
 
-$workedDays = 0;
+$totalSeconds = 0;
 
-foreach (getAllDtrByInternId($_SESSION['intern_id'] ?? '') as $dtr) {
-    if (!empty($dtr['time_in']) && !empty($dtr['time_out'])) {
-        $workedDays++;
-    }
+if (!empty($scheduleTemplate)) {
+    $startTime  = $scheduleTemplate['start_time'] ?? '';
+    $breakStart = $scheduleTemplate['break_start'] ?? '';
+    $breakEnd   = $scheduleTemplate['break_end'] ?? '';
+    $endTime    = $scheduleTemplate['end_time'] ?? '';
+
+    $totalSeconds  = strtotime($endTime) - strtotime($startTime);
+    $totalSeconds -= strtotime($breakEnd) - strtotime($breakStart);
 }
 
-$avgHoursPerDay = ($workedDays > 0)
-    ? ($totalRenderedSeconds / 3600) / $workedDays
-    : 0;
-
-$remainingHoursDecimal = $remainingSeconds / 3600;
-
-$estimatedDays = ($avgHoursPerDay > 0)
-    ? ceil($remainingHoursDecimal / $avgHoursPerDay)
-    : 0;
+$totalHours = ($totalSeconds > 0) ? floor($totalSeconds / 3600) : 8; // Default to 8 if not set
 
 $estimatedFinishDate = null;
 
-if ($estimatedDays > 0) {
-    $today = new DateTime('now', $timeZone);
-    $today->modify("+{$estimatedDays} days");
-    $estimatedFinishDate = $today;
+if ($remainingSeconds > 0 && $totalHours > 0) {
+
+    $remainingHoursToComplete = $remainingHours;
+    $currentDate              = new DateTime('now', $timeZone);
+    
+    // Get current time to check if we can still work today
+    $currentTime    = $currentDate->format('H:i:s');
+    $currentDayName = $currentDate->format('l');
+    
+    // Check if today is a working day
+    $todaySchedule = getScheduleTemplateDayOfWeekByDayInternId(
+        $currentDayName,
+        $intern['intern_id'] ?? ''
+    );
+    
+    $hoursAccumulated  = 0;
+    $startFromTomorrow = false;
+    
+    // Check if we can work today
+    if (!empty($todaySchedule)) {
+        $scheduleEndTime = $todaySchedule['end_time'];
+        
+        // If current time is after schedule end time, we cannot work today
+        if ($currentTime >= $scheduleEndTime) {
+            $startFromTomorrow = true;
+        } else {
+            // Calculate remaining hours for today
+            $endTimeToday          = new DateTime($currentDate->format('Y-m-d') . ' ' . $scheduleEndTime, $timeZone);
+            $currentDateTime       = new DateTime($currentDate->format('Y-m-d') . ' ' . $currentTime, $timeZone);
+            $remainingSecondsToday = max(0, $endTimeToday->getTimestamp() - $currentDateTime->getTimestamp());
+            $remainingHoursToday   = $remainingSecondsToday / 3600;
+            
+            // Use remaining hours today
+            $hoursAccumulated   += min($remainingHoursToday, $remainingHoursToComplete);
+            $estimatedFinishDate = clone $currentDate;
+            
+            // If we completed all hours today
+            if ($hoursAccumulated >= $remainingHoursToComplete) {
+                $estimatedFinishDate = clone $currentDate;
+            } else {
+                $startFromTomorrow = true;
+            }
+        }
+    } else {
+        $startFromTomorrow = true;
+    }
+    
+    // If we need more days beyond today
+    if ($startFromTomorrow && $hoursAccumulated < $remainingHoursToComplete) {
+        $currentDate->modify('+1 day');
+        
+        // Continue counting days until we accumulate all required hours
+        while ($hoursAccumulated < $remainingHoursToComplete) {
+            $dayName     = $currentDate->format('l');
+            
+            $daySchedule = getScheduleTemplateDayOfWeekByDayInternId(
+                $dayName,
+                $intern['intern_id'] ?? ''
+            );
+            
+            // If this is a working day
+            if (!empty($daySchedule)) {
+                // Add full day hours
+                $hoursAccumulated   += $totalHours;
+                $estimatedFinishDate = clone $currentDate;
+                
+                // If we've met or exceeded the requirement, break
+                if ($hoursAccumulated >= $remainingHoursToComplete) {
+                    break;
+                }
+            }
+            
+            // Move to next day
+            $currentDate->modify('+1 day');
+            
+            // Safety check to prevent infinite loop (max 1 year)
+            if ($currentDate->format('Y') > date('Y') + 1) {
+                break;
+            }
+        }
+    }
 }
 ?>
 
@@ -316,10 +389,10 @@ if ($estimatedDays > 0) {
                                 $hours   = floor($seconds / 3600);
                                 $minutes = floor(($seconds % 3600) / 60);
 
-                                $totalHours = "{$hours} hr" . ($hours != 1 ? 's' : '') .
+                                $totalHoursDisplay = "{$hours} hr" . ($hours != 1 ? 's' : '') .
                                     " {$minutes} min" . ($minutes != 1 ? 's' : '');
                             } else {
-                                $totalHours = '&mdash;';
+                                $totalHoursDisplay = '&mdash;';
                             }
                         ?>
                             <tr class="border-b border-gray-200">
@@ -333,7 +406,7 @@ if ($estimatedDays > 0) {
                                     <?= ($timeOut ? $timeOut->format('h:i A') : '&mdash;') . PHP_EOL; ?>
                                 </td>
                                 <td>
-                                    <?= $totalHours . PHP_EOL; ?>
+                                    <?= $totalHoursDisplay . PHP_EOL; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

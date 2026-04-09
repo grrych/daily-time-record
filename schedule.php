@@ -75,7 +75,7 @@ flashMessage();
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <?php foreach ($daysOfWeek as $day): ?>
 
-                                    <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id'] ?? ''); ?>
+                                    <?php $schedule = getScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id'] ?? ''); ?>
 
                                     <label class="flex items-center gap-2 cursor-pointer border border-gray-300 px-4 py-3 rounded">
                                         <input
@@ -166,7 +166,7 @@ flashMessage();
         <!-- Cards -->
         <div class="grid md:grid-cols-3 gap-6 mb-6">
             <?php foreach ($daysOfWeek as $day): ?>
-                <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
+                <?php $schedule = getScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
 
                 <div class="bg-white p-5 rounded-lg shadow">
                     <p class="text-sm text-gray-500"><?= $day ?></p>
@@ -212,7 +212,7 @@ flashMessage();
                 <tbody class="divide-y">
 
                     <?php foreach ($daysOfWeek as $day): ?>
-                        <?php $schedule = getIScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
+                        <?php $schedule = getScheduleTemplateDayOfWeekByDayInternId($day, $intern['intern_id']); ?>
 
                         <?php
                         if (!empty($schedule)) {
