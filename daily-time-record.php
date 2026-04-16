@@ -11,6 +11,7 @@ require_once SRC . '/intern-schedule/intern-schedule.php';
 require_once SRC . '/dtr/add-dtr.php';
 require_once SRC . '/dtr/time-in-dtr.php';
 require_once SRC . '/dtr/time-out-dtr.php';
+require_once SRC . '/dtr/export-dtr.php';
 
 require_once TEMP . '/header.php';
 

@@ -36,6 +36,27 @@ function getAllDtrByInternId($internId)
     return $dtr;
 }
 
+function getAllDtrAscByInternId($internId)
+{
+    $conn = connection();
+    $dtr  = [];
+
+    try {
+        $sql = "SELECT * FROM dtr_records
+                WHERE intern_id = ?
+                ORDER BY work_date ASC;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $internId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dtr = $result->fetch_all(MYSQLI_ASSOC);
+    } catch (mysqli_sql_exception $e) {
+        errorLog($e);
+    }
+    return $dtr;
+}
+
 function getDtrRecentLogByInternId($internId)
 {
     $conn = connection();
