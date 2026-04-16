@@ -105,6 +105,31 @@ function getDtrThisWeek($internId, $weekStart, $weekEnd)
     return $dtr;
 }
 
+function getCompletedHoursByInternId($internId)
+{
+    $conn = connection();
+    $totalHours = 0;
+
+    try {
+        $sql = "SELECT SUM(total_hours) AS total 
+                FROM dtr_records 
+                WHERE intern_id = ?;";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $internId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+
+        $totalHours = $data['total'] ?? 0;
+    } catch (mysqli_sql_exception $e) {
+        errorLog($e);
+    }
+
+    return $totalHours;
+}
+
 function updateDtrTodayByWorkDateInternId($timeOut, $totalHours, $workDate, $internId)
 {
     $conn     = connection();
