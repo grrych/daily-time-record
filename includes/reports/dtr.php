@@ -110,8 +110,8 @@ ob_start();
 <h2>Daily Time Record</h2>
 
 <div class="info">
-    <p><strong>Name:</strong> <?= $internData['first_name'] . ' ' . $internData['last_name'] ?></p>
-    <p><strong>Student Number:</strong> <?= $internData['student_number'] ?? '—' ?></p>
+    <p><strong>Name:</strong> <?= e($internData['first_name'] ?? '') . ' '. e($internData['middle_name'] ?? '') .' ' . e($internData['last_name'] ?? ''); ?></p>
+    <p><strong>Student Number:</strong> <?= e($internData['student_number'] ?? '—'); ?></p>
 </div>
 
 <table>
