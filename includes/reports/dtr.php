@@ -144,7 +144,7 @@ ob_start();
         }
     ?>
         <tr>
-            <td><?= date('F j, Y', strtotime($dtr['work_date'])) ?></td>
+            <td><?= date('M d, Y', strtotime($dtr['work_date'])) ?></td>
             <td><?= $timeIn ? $timeIn->format('g:i A') : '—' ?></td>
             <td><?= $timeOut ? $timeOut->format('g:i A') : '—' ?></td>
             <td><?= $hours ?></td>
