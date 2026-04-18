@@ -81,7 +81,7 @@ ob_start();
 
     .info {
         margin-bottom: 15px;
-        font-size: 12px;
+        font-size: 14px;
     }
 
     .info p {
@@ -97,7 +97,7 @@ ob_start();
     td {
         border: 1px solid black;
         padding: 6px;
-        font-size: 12px;
+        font-size: 14px;
         text-align: center;
     }
 
