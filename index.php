@@ -114,30 +114,33 @@ if (!empty($scheduleTemplate)) {
 
 $totalHours = ($totalSeconds > 0) ? floor($totalSeconds / 3600) : 8; // Default to 8 if not set
 
+// include minutes
+$remainingHoursToComplete = $remainingSeconds / 3600;
+
 $estimatedFinishDate = null;
 
 if ($remainingSeconds > 0 && $totalHours > 0) {
 
     $remainingHoursToComplete = $remainingHours;
     $currentDate              = new DateTime('now', $timeZone);
-    
+
     // Get current time to check if we can still work today
     $currentTime    = $currentDate->format('H:i:s');
     $currentDayName = $currentDate->format('l');
-    
+
     // Check if today is a working day
     $todaySchedule = getScheduleTemplateDayOfWeekByDayInternId(
         $currentDayName,
         $intern['intern_id'] ?? ''
     );
-    
+
     $hoursAccumulated  = 0;
     $startFromTomorrow = false;
-    
+
     // Check if we can work today
     if (!empty($todaySchedule)) {
         $scheduleEndTime = $todaySchedule['end_time'];
-        
+
         // If current time is after schedule end time, we cannot work today
         if ($currentTime >= $scheduleEndTime) {
             $startFromTomorrow = true;
@@ -147,11 +150,11 @@ if ($remainingSeconds > 0 && $totalHours > 0) {
             $currentDateTime       = new DateTime($currentDate->format('Y-m-d') . ' ' . $currentTime, $timeZone);
             $remainingSecondsToday = max(0, $endTimeToday->getTimestamp() - $currentDateTime->getTimestamp());
             $remainingHoursToday   = $remainingSecondsToday / 3600;
-            
+
             // Use remaining hours today
             $hoursAccumulated   += min($remainingHoursToday, $remainingHoursToComplete);
             $estimatedFinishDate = clone $currentDate;
-            
+
             // If we completed all hours today
             if ($hoursAccumulated >= $remainingHoursToComplete) {
                 $estimatedFinishDate = clone $currentDate;
@@ -162,41 +165,47 @@ if ($remainingSeconds > 0 && $totalHours > 0) {
     } else {
         $startFromTomorrow = true;
     }
-    
+
     // If we need more days beyond today
     if ($startFromTomorrow && $hoursAccumulated < $remainingHoursToComplete) {
         $currentDate->modify('+1 day');
-        
+
         // Continue counting days until we accumulate all required hours
         while ($hoursAccumulated < $remainingHoursToComplete) {
             $dayName     = $currentDate->format('l');
-            
+
             $daySchedule = getScheduleTemplateDayOfWeekByDayInternId(
                 $dayName,
                 $intern['intern_id'] ?? ''
             );
-            
+
             // If this is a working day
             if (!empty($daySchedule)) {
                 // Add full day hours
                 $hoursAccumulated   += $totalHours;
                 $estimatedFinishDate = clone $currentDate;
-                
+
                 // If we've met or exceeded the requirement, break
                 if ($hoursAccumulated >= $remainingHoursToComplete) {
                     break;
                 }
             }
-            
+
             // Move to next day
             $currentDate->modify('+1 day');
-            
+
             // Safety check to prevent infinite loop (max 1 year)
             if ($currentDate->format('Y') > date('Y') + 1) {
                 break;
             }
         }
     }
+}
+
+$remainingWorkingDays = null;
+
+if ($remainingSeconds > 0 && $totalHours > 0) {
+    $remainingWorkingDays = ceil($remainingSeconds / ($totalHours * 3600));
 }
 ?>
 
@@ -285,8 +294,33 @@ if ($remainingSeconds > 0 && $totalHours > 0) {
                 </div>
             </div>
 
+            <!-- Remaining Days -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Remaining Days</p>
+
+                    <h2 class="text-lg font-semibold text-indigo-600">
+                        <?php if ($remainingSeconds <= 0): ?>
+                            0 days
+                        <?php elseif (!is_null($remainingWorkingDays)): ?>
+                            <?= $remainingWorkingDays . ' working day' . ($remainingWorkingDays != 1 ? 's' : '') ?>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </h2>
+
+                </div>
+
+                <div class="bg-indigo-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+
             <!-- Estimated Finish -->
-            <div class="bg-white p-6 rounded-lg shadow col-span-2 flex items-center justify-between">
+            <div class="bg-white p-6 rounded-lg shadow flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-500">Estimated Finish</p>
                     <h2 class="text-lg font-semibold text-blue-600">
@@ -300,9 +334,9 @@ if ($remainingSeconds > 0 && $totalHours > 0) {
                     </h2>
 
                     <!-- Caption -->
-                    <p class="text-sm text-gray-400 mt-2">
+                    <!-- <p class="text-sm text-gray-400 mt-2">
                         *Estimation is based on scheduled hours and does not include holidays.*
-                    </p>
+                    </p> -->
                 </div>
 
                 <div class="<?= $remainingSeconds <= 0 ? 'bg-green-100' : 'bg-blue-100' ?> p-3 rounded-full">
