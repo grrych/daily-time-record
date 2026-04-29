@@ -256,7 +256,7 @@ $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Student Number</label>
                         <input type="text" name="studentNumber" value="<?= e($intern['student_number'] ?? '') ?>"
-                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-600">
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900">
                     </div>
 
                     <!-- Name Fields -->
@@ -264,17 +264,17 @@ $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">First Name</label>
                             <input type="text" name="firstName" value="<?= e($intern['first_name'] ?? '') ?>"
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900 focus:ring focus:ring-blue-200">
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Middle Name</label>
                             <input type="text" name="middleName" value="<?= e($intern['middle_name'] ?? '') ?>"
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900 focus:ring focus:ring-blue-200">
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Last Name</label>
                             <input type="text" name="lastName" value="<?= e($intern['last_name'] ?? '') ?>"
-                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900 focus:ring focus:ring-blue-200">
                         </div>
                     </div>
 
@@ -282,14 +282,14 @@ $remainingMinutes = floor(($remainingSeconds % 3600) / 60);
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Email</label>
                         <input type="email" name="email" value="<?= e($intern['email'] ?? '') ?>"
-                            class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900 focus:ring focus:ring-blue-200">
                     </div>
 
                     <!-- Required Hours -->
                     <div>
                         <label class="block text-sm text-gray-600 mb-1">Required Hours</label>
                         <input type="text" name="requiredHours" value="<?= e($intern['required_hours'] ?? '') ?>"
-                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-600">
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-gray-900">
                     </div>
 
                     <!-- Buttons -->
