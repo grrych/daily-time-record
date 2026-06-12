@@ -1,4 +1,8 @@
 <?php
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv->load();
 
 function connection()
 {
@@ -6,11 +10,11 @@ function connection()
 
     try {
         $config = [
-            'hostname'  => 'localhost',
-            'port'      => 3306,
-            'username'  => 'root',
-            'password'  => '',
-            'db_name'   => 'dtr_db'
+            'hostname'  => $_ENV['HOST_NAME'] ?? 'localhost',
+            'port'      => $_ENV['PORT'] ?? 3306,
+            'username'  => $_ENV['USERNAME'] ?? 'root',
+            'password'  => $_ENV['PASSWORD'] ?? '',
+            'db_name'   => $_ENV['DB_NAME'] ?? ''
         ];
 
         $connection = new mysqli(

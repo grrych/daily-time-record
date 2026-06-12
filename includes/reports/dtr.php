@@ -7,8 +7,6 @@ require_once SRC . '/intern/intern.php';
 require_once SRC . '/dtr/dtr.php';
 require_once SRC . '/schedule-template/schedule-template.php';
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 use Dompdf\Dompdf;
 
 $timeZone = new DateTimeZone('Asia/Manila');
